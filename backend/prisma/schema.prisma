@@ -1,0 +1,315 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum ApplicationStatus {
+  NEW
+  REVIEWING
+  ACCEPTED
+  REJECTED
+}
+
+model Language {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  name        String
+  nativeName  String
+  flag        String?  @default("🌐")
+  direction   String?  @default("ltr")
+  isEnabled   Boolean  @default(true)
+  isDefault   Boolean  @default(false)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("languages")
+}
+
+model User {
+  id             String         @id @default(uuid())
+  firstName      String
+  lastName       String
+  middleName     String?        @default("")
+  email          String         @unique
+  phone          String?        @default("")
+  passwordHash   String
+  profileImage   String?        @default("")
+  role           Role           @default(USER)
+  isActive       Boolean        @default(true)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  lastLoginAt    DateTime?
+  googleId       String?        @unique
+  language       String?        @default("en")
+  languageCode   String?        @default("en")
+  theme          String?        @default("light")
+  primaryColor   String?        @default("#0066cc")
+  secondaryColor String?        @default("#00a3ff")
+
+  applications   Application[]
+
+  @@map("users")
+}
+
+model Branch {
+  id           String              @id @default(uuid())
+  name         String
+  description  String
+  address      String
+  phone        String
+  latitude     Float?              @default(0)
+  longitude    Float?              @default(0)
+  image        String?             @default("")
+  images       String?             @default("[]")
+  video        String?             @default("")
+  workingHours String?             @default("08:30 - 18:00")
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+
+  teachers     Teacher[]
+  results      StudentResult[]
+  projects     Project[]
+  applications Application[]
+  events       Event[]
+  translations BranchTranslation[]
+
+  @@map("branches")
+}
+
+model BranchTranslation {
+  id           String   @id @default(uuid())
+  branchId     String
+  languageCode String
+  name         String
+  description  String
+  address      String
+  workingHours String?  @default("08:30 - 18:00")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  branch       Branch   @relation(fields: [branchId], references: [id], onDelete: Cascade)
+
+  @@unique([branchId, languageCode])
+  @@map("branch_translations")
+}
+
+model Teacher {
+  id           String               @id @default(uuid())
+  firstName    String
+  lastName     String
+  middleName   String?              @default("")
+  photo        String?              @default("")
+  bio          String?
+  subject      String?              @default("Computer Science / AI")
+  university   String?              @default("")
+  degree       String?              @default("")
+  IELTSScore   String?              @default("")
+  SATScore     String?              @default("")
+  HSKScore     String?              @default("")
+  certificates String?              @default("")
+  achievements String?              @default("")
+  branchId     String?
+  branch       Branch?              @relation(fields: [branchId], references: [id], onDelete: SetNull)
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+
+  translations TeacherTranslation[]
+
+  @@map("teachers")
+}
+
+model TeacherTranslation {
+  id           String   @id @default(uuid())
+  teacherId    String
+  languageCode String
+  bio          String?
+  subject      String?
+  university   String?
+  degree       String?
+  certificates String?
+  achievements String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  teacher      Teacher  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  @@unique([teacherId, languageCode])
+  @@map("teacher_translations")
+}
+
+model StudentResult {
+  id           String                     @id @default(uuid())
+  studentName  String
+  studentPhoto String?                    @default("")
+  examType     String
+  score        String
+  branchId     String?
+  branch       Branch?                    @relation(fields: [branchId], references: [id], onDelete: SetNull)
+  year         Int?                       @default(2026)
+  description  String?                    @default("")
+  createdAt    DateTime                   @default(now())
+  updatedAt    DateTime                   @updatedAt
+
+  translations StudentResultTranslation[]
+
+  @@map("student_results")
+}
+
+model StudentResultTranslation {
+  id           String        @id @default(uuid())
+  resultId     String
+  languageCode String
+  description  String?       @default("")
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  result       StudentResult @relation(fields: [resultId], references: [id], onDelete: Cascade)
+
+  @@unique([resultId, languageCode])
+  @@map("student_result_translations")
+}
+
+model Project {
+  id           String               @id @default(uuid())
+  title        String
+  description  String
+  studentName  String
+  studentPhoto String?              @default("")
+  projectImage String?              @default("")
+  projectUrl   String?              @default("")
+  branchId     String?
+  branch       Branch?              @relation(fields: [branchId], references: [id], onDelete: SetNull)
+  category     String?              @default("AI & Machine Learning")
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+
+  translations ProjectTranslation[]
+
+  @@map("projects")
+}
+
+model ProjectTranslation {
+  id           String   @id @default(uuid())
+  projectId    String
+  languageCode String
+  title        String
+  description  String
+  category     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  project      Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, languageCode])
+  @@map("project_translations")
+}
+
+model News {
+  id               String            @id @default(uuid())
+  title            String
+  slug             String            @unique
+  shortDescription String?
+  content          String
+  coverImage       String?           @default("")
+  author           String?           @default("NIS AI School")
+  published        Boolean           @default(true)
+  publishedAt      DateTime?         @default(now())
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  translations     NewsTranslation[]
+
+  @@map("news")
+}
+
+model NewsTranslation {
+  id               String   @id @default(uuid())
+  newsId           String
+  languageCode     String
+  title            String
+  shortDescription String?
+  content          String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  news             News     @relation(fields: [newsId], references: [id], onDelete: Cascade)
+
+  @@unique([newsId, languageCode])
+  @@map("news_translations")
+}
+
+model Program {
+  id           String               @id @default(uuid())
+  code         String               @unique
+  image        String?              @default("")
+  duration     String?              @default("1 year")
+  badge        String?              @default("")
+  tags         String?              @default("[]")
+  order        Int                  @default(0)
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+
+  translations ProgramTranslation[]
+
+  @@map("programs")
+}
+
+model ProgramTranslation {
+  id           String   @id @default(uuid())
+  programId    String
+  languageCode String
+  title        String
+  description  String
+  badge        String?
+  requirements String?  @default("")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  program      Program  @relation(fields: [programId], references: [id], onDelete: Cascade)
+
+  @@unique([programId, languageCode])
+  @@map("program_translations")
+}
+
+model Application {
+  id              String            @id @default(uuid())
+  userId          String?
+  user            User?             @relation(fields: [userId], references: [id], onDelete: SetNull)
+  fullName        String
+  phone           String
+  email           String
+  branchId        String?
+  branch          Branch?           @relation(fields: [branchId], references: [id], onDelete: SetNull)
+  selectedProgram String?           @default("AI & Data Science")
+  message         String?
+  status          ApplicationStatus @default(NEW)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@map("applications")
+}
+
+model Event {
+  id          String    @id @default(uuid())
+  title       String
+  description String
+  date        DateTime
+  location    String?   @default("")
+  image       String?   @default("")
+  branchId    String?
+  branch      Branch?   @relation(fields: [branchId], references: [id], onDelete: SetNull)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("events")
+}
