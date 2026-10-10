@@ -33,6 +33,23 @@ let fileDb = {
   programTranslations: [],
   applications: [],
   events: [],
+  activities: [],
+  settings: {
+    schoolName: 'NIS AI School',
+    contactEmail: 'info@nis-ai.edu.uz',
+    contactPhone: '+998 71 200 00 55',
+    address: 'Toshkent sh., Yunusobod tumani, Amir Temur 108',
+    defaultLanguage: 'uz',
+    allowRegistrations: true,
+    maintenanceMode: false,
+    bannerNotice: '',
+    socialLinks: {
+      telegram: 'https://t.me/nis_ai_school',
+      instagram: 'https://instagram.com/nis_ai_school',
+      youtube: 'https://youtube.com/@nis_ai_school',
+      github: 'https://github.com/nis-ai-school'
+    }
+  },
 };
 
 // Default initial languages (10 standard languages)
@@ -181,6 +198,24 @@ const loadFileDb = () => {
         programTranslations: loaded.programTranslations || [],
         applications: loaded.applications || [],
         events: loaded.events || [],
+        activities: loaded.activities || [],
+        settings: {
+          schoolName: 'NIS AI School',
+          contactEmail: 'info@nis-ai.edu.uz',
+          contactPhone: '+998 71 200 00 55',
+          address: 'Toshkent sh., Yunusobod tumani, Amir Temur 108',
+          defaultLanguage: 'uz',
+          allowRegistrations: true,
+          maintenanceMode: false,
+          bannerNotice: '',
+          socialLinks: {
+            telegram: 'https://t.me/nis_ai_school',
+            instagram: 'https://instagram.com/nis_ai_school',
+            youtube: 'https://youtube.com/@nis_ai_school',
+            github: 'https://github.com/nis-ai-school'
+          },
+          ...(loaded.settings || {})
+        },
       };
     }
   } catch (err) {
@@ -1365,23 +1400,48 @@ const countTeachers = async () => fileDb.teachers.length;
 
 // ─── STUDENT RESULTS OPERATIONS (MULTILINGUAL) ───────────────────────────────
 
-const listResults = async ({ search = '', branchId = '', examType = '', language = 'en', limit = 50, page = 1 } = {}) => {
-  const transKeys = ['description'];
+const listResults = async ({ search = '', branchId = '', examType = '', category = '', published = '', language = 'en', limit = 50, page = 1 } = {}) => {
+  const transKeys = ['description', 'title'];
   let items = fileDb.studentResults || [];
   const translations = fileDb.studentResultTranslations || [];
 
   const localizedList = items.map((r) => {
     const rTrans = translations.filter((tr) => tr.resultId === r.id);
-    return resolveEntityLocalization(r, rTrans, language, transKeys);
+    const resolved = resolveEntityLocalization(r, rTrans, language, transKeys);
+    const achType = r.achievementType || r.examType || 'Academic';
+    const cat = r.category || (
+      achType === 'IOI' || achType === 'IAIO' || achType === 'Olympiad' ? 'Olympiad' :
+      achType === 'IELTS' || achType === 'SAT' || achType === 'HSK' ? 'Standardized Tests' :
+      achType === 'Admission' ? 'University Admission' : 'Academic Award'
+    );
+    return {
+      ...resolved,
+      category: cat,
+      achievementType: achType,
+      award: r.award || r.score || '',
+      title: resolved.title || resolved.description || `${achType} — ${r.score || ''}`,
+      certificatePhoto: r.certificatePhoto || '',
+      published: r.published !== false,
+    };
   });
 
   let filtered = localizedList;
   if (branchId) filtered = filtered.filter((r) => r.branchId === branchId);
-  if (examType) filtered = filtered.filter((r) => r.examType === examType);
+  if (examType) filtered = filtered.filter((r) => (r.examType || '').toLowerCase() === examType.toLowerCase() || (r.achievementType || '').toLowerCase() === examType.toLowerCase());
+  if (category) filtered = filtered.filter((r) => (r.category || '').toLowerCase() === category.toLowerCase());
+  if (published !== '') {
+    const isPub = published === true || published === 'true';
+    filtered = filtered.filter((r) => r.published === isPub);
+  }
   if (search) {
     const s = search.toLowerCase();
     filtered = filtered.filter(
-      (r) => r.studentName?.toLowerCase().includes(s) || r.examType?.toLowerCase().includes(s)
+      (r) =>
+        r.studentName?.toLowerCase().includes(s) ||
+        r.examType?.toLowerCase().includes(s) ||
+        r.achievementType?.toLowerCase().includes(s) ||
+        r.title?.toLowerCase().includes(s) ||
+        r.description?.toLowerCase().includes(s)
     );
   }
 
@@ -1392,17 +1452,32 @@ const listResults = async ({ search = '', branchId = '', examType = '', language
   return {
     data: paged,
     total,
-    page,
+    page: parseInt(page),
     pages: Math.ceil(total / limit) || 1,
   };
 };
 
 const findResultById = async (id, language = 'en') => {
-  const transKeys = ['description'];
+  const transKeys = ['description', 'title'];
   const r = fileDb.studentResults.find((x) => x.id === id || x._id === id);
   if (!r) return null;
   const translations = (fileDb.studentResultTranslations || []).filter((tr) => tr.resultId === r.id);
-  return formatItem(resolveEntityLocalization(r, translations, language, transKeys));
+  const resolved = resolveEntityLocalization(r, translations, language, transKeys);
+  const achType = r.achievementType || r.examType || 'Academic';
+  const cat = r.category || (
+    achType === 'IOI' || achType === 'IAIO' || achType === 'Olympiad' ? 'Olympiad' :
+    achType === 'IELTS' || achType === 'SAT' || achType === 'HSK' ? 'Standardized Tests' :
+    achType === 'Admission' ? 'University Admission' : 'Academic Award'
+  );
+  return formatItem({
+    ...resolved,
+    category: cat,
+    achievementType: achType,
+    award: r.award || r.score || '',
+    title: resolved.title || resolved.description || `${achType} — ${r.score || ''}`,
+    certificatePhoto: r.certificatePhoto || '',
+    published: r.published !== false,
+  });
 };
 
 const saveResultTranslations = (resultId, translationsInput = []) => {
@@ -1430,6 +1505,7 @@ const saveResultTranslations = (resultId, translationsInput = []) => {
       id: existingIdx !== -1 ? fileDb.studentResultTranslations[existingIdx].id : 'rt_' + resultId + '_' + langCode,
       resultId,
       languageCode: langCode,
+      title: item.title || '',
       description: item.description || '',
       updatedAt: new Date().toISOString(),
     };
@@ -1446,16 +1522,28 @@ const saveResultTranslations = (resultId, translationsInput = []) => {
 const createResult = async (data) => {
   const id = data.id || 'res_' + Date.now();
   const now = new Date();
+  const exam = data.achievementType || data.examType || 'IELTS';
+  const cat = data.category || (
+    exam === 'IOI' || exam === 'IAIO' || exam === 'Olympiad' ? 'Olympiad' :
+    exam === 'IELTS' || exam === 'SAT' || exam === 'HSK' ? 'Standardized Tests' :
+    exam === 'Admission' ? 'University Admission' : 'Academic Award'
+  );
   const record = {
     id,
     _id: id,
     studentName: data.studentName || '',
     studentPhoto: data.studentPhoto || data.photo || '',
-    examType: data.examType || 'IELTS',
-    score: String(data.score || ''),
+    examType: exam,
+    achievementType: exam,
+    category: cat,
+    title: data.title || '',
+    score: String(data.award || data.score || ''),
+    award: String(data.award || data.score || ''),
+    certificatePhoto: data.certificatePhoto || '',
     branchId: data.branchId || null,
     year: data.year ? parseInt(data.year) : 2026,
     description: data.description || '',
+    published: data.published !== false,
     createdAt: now.toISOString(),
     updatedAt: now.toISOString(),
   };
@@ -1466,8 +1554,8 @@ const createResult = async (data) => {
     saveResultTranslations(id, data.translations);
   } else {
     saveResultTranslations(id, [
-      { languageCode: 'en', description: data.description },
-      { languageCode: 'uz', description: data.description },
+      { languageCode: 'en', title: data.title || '', description: data.description || '' },
+      { languageCode: 'uz', title: data.title || '', description: data.description || '' },
     ]);
   }
 
@@ -1483,6 +1571,10 @@ const updateResult = async (id, data) => {
   fileDb.studentResults[idx] = {
     ...fileDb.studentResults[idx],
     ...data,
+    examType: data.achievementType || data.examType || fileDb.studentResults[idx].examType,
+    achievementType: data.achievementType || data.examType || fileDb.studentResults[idx].achievementType,
+    score: data.award !== undefined ? String(data.award) : data.score !== undefined ? String(data.score) : fileDb.studentResults[idx].score,
+    award: data.award !== undefined ? String(data.award) : data.score !== undefined ? String(data.score) : fileDb.studentResults[idx].award,
     updatedAt: now.toISOString(),
   };
 
@@ -1885,16 +1977,47 @@ const createApplication = async (data) => {
   return record;
 };
 
-const updateApplicationStatus = async (id, status) => {
+const updateApplication = async (id, data = {}) => {
   const now = new Date();
   const idx = fileDb.applications.findIndex((x) => x.id === id || x._id === id);
   if (idx !== -1) {
-    fileDb.applications[idx].status = status;
-    fileDb.applications[idx].updatedAt = now.toISOString();
+    const current = fileDb.applications[idx];
+    const prevStatus = current.status;
+    const newStatus = data.status || current.status;
+    const history = Array.isArray(current.history) ? [...current.history] : [];
+
+    if (data.status && data.status !== prevStatus) {
+      history.push({
+        status: newStatus,
+        note: data.note || data.internalNotes || `Status changed from ${prevStatus} to ${newStatus}`,
+        by: data.by || data.adminName || 'Admin',
+        at: now.toISOString(),
+      });
+    } else if (data.note || data.internalNotes) {
+      history.push({
+        status: newStatus,
+        note: data.note || data.internalNotes,
+        by: data.by || data.adminName || 'Admin',
+        at: now.toISOString(),
+      });
+    }
+
+    fileDb.applications[idx] = {
+      ...current,
+      ...data,
+      status: newStatus,
+      internalNotes: data.internalNotes !== undefined ? data.internalNotes : current.internalNotes || '',
+      history,
+      updatedAt: now.toISOString(),
+    };
     saveFileDb();
     return fileDb.applications[idx];
   }
   return null;
+};
+
+const updateApplicationStatus = async (id, status, extra = {}) => {
+  return updateApplication(id, { status, ...extra });
 };
 
 const deleteApplication = async (id) => {
@@ -1908,6 +2031,68 @@ const countApplications = async (filter = {}) => {
     return fileDb.applications.filter((a) => a.status === filter.status).length;
   }
   return fileDb.applications.length;
+};
+
+// ─── ACTIVITY LOGS OPERATIONS ───────────────────────────────────────────────
+
+const logActivity = async ({ userId = null, userName = 'System Admin', action = 'UPDATE', entity = 'System', details = '', ip = '' } = {}) => {
+  if (!fileDb.activities) fileDb.activities = [];
+  const logItem = {
+    id: 'act_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+    userId,
+    userName,
+    action,
+    entity,
+    details,
+    ip,
+    createdAt: new Date().toISOString(),
+  };
+  fileDb.activities.unshift(logItem);
+  if (fileDb.activities.length > 500) {
+    fileDb.activities = fileDb.activities.slice(0, 500);
+  }
+  saveFileDb();
+  return logItem;
+};
+
+const listActivities = async ({ page = 1, limit = 20, action = '', search = '' } = {}) => {
+  let list = fileDb.activities || [];
+  if (action) {
+    list = list.filter((a) => (a.action || '').toUpperCase() === action.toUpperCase());
+  }
+  if (search) {
+    const s = search.toLowerCase();
+    list = list.filter((a) =>
+      (a.userName || '').toLowerCase().includes(s) ||
+      (a.entity || '').toLowerCase().includes(s) ||
+      (a.details || '').toLowerCase().includes(s)
+    );
+  }
+  const total = list.length;
+  const start = (page - 1) * limit;
+  const paged = list.slice(start, start + limit);
+  return {
+    data: paged,
+    total,
+    page: parseInt(page),
+    pages: Math.ceil(total / limit) || 1,
+  };
+};
+
+// ─── SYSTEM SETTINGS OPERATIONS ─────────────────────────────────────────────
+
+const getSettings = async () => {
+  return fileDb.settings || {};
+};
+
+const updateSettings = async (data = {}) => {
+  fileDb.settings = {
+    ...(fileDb.settings || {}),
+    ...data,
+    updatedAt: new Date().toISOString(),
+  };
+  saveFileDb();
+  return fileDb.settings;
 };
 
 // ─── EVENT OPERATIONS ────────────────────────────────────────────────────────
@@ -2045,9 +2230,16 @@ module.exports = {
   listApplications,
   findApplicationById,
   createApplication,
+  updateApplication,
   updateApplicationStatus,
   deleteApplication,
   countApplications,
+  // Activity Logs
+  logActivity,
+  listActivities,
+  // Settings
+  getSettings,
+  updateSettings,
   // Events
   listEvents,
   findEventById,

@@ -1,5 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
+import i18n from '../i18n';
 import { dictionaries, availableLanguages as initialLanguages, resolveTranslation } from '../translations';
 import { getLocalized } from '../utils/localize';
 import { authAPI, translationAPI, languageAPI } from '../api';
@@ -10,18 +12,11 @@ export { initialLanguages as availableLanguages };
 
 export function LanguageProvider({ children }) {
   const queryClient = useQueryClient();
+  const { t: i18nT, i18n: i18nInstance } = useTranslation();
 
-  // 1. Initial language: user saved in localStorage, or 'en' by default
+  // 1. Initial language: active i18n language, or localStorage, or 'uz'
   const [language, setLanguageState] = useState(() => {
-    try {
-      const saved = localStorage.getItem('nis_language');
-      if (saved) {
-        return saved;
-      }
-    } catch {
-      // safe fallback
-    }
-    return 'en'; // Default requirement: English
+    return i18nInstance.language || localStorage.getItem('nis_language') || 'uz';
   });
 
   // Dynamic Languages list (loaded from database / backend)
@@ -103,6 +98,7 @@ export function LanguageProvider({ children }) {
     const cleanLang = String(lang).toLowerCase().trim();
 
     setLanguageState(cleanLang);
+    i18n.changeLanguage(cleanLang);
     try {
       localStorage.setItem('nis_language', cleanLang);
     } catch {
@@ -147,10 +143,22 @@ export function LanguageProvider({ children }) {
 
     let result = '';
 
-    // 1. Try backend fetched translation first
-    const fromBackend = resolveTranslation(dynamicTranslations[language], key);
-    if (typeof fromBackend === 'string' && fromBackend !== '') {
-      result = fromBackend;
+    // 0. Try react-i18next
+    try {
+      if (i18nT && typeof i18nT === 'function') {
+        const translated = i18nT(key, params || {});
+        if (translated && translated !== key) {
+          result = translated;
+        }
+      }
+    } catch (_) {}
+
+    // 1. Try backend fetched translation next
+    if (!result) {
+      const fromBackend = resolveTranslation(dynamicTranslations[language], key);
+      if (typeof fromBackend === 'string' && fromBackend !== '') {
+        result = fromBackend;
+      }
     }
 
     // 2. Try static dictionary for current language

@@ -85,6 +85,9 @@ app.use(
       if (
         !origin ||
         allowedOrigins.includes(cleanOrigin) ||
+        cleanOrigin.endsWith('.vercel.app') ||
+        cleanOrigin.endsWith('.onrender.com') ||
+        cleanOrigin.endsWith('.railway.app') ||
         (process.env.NODE_ENV !== 'production' &&
           (cleanOrigin.startsWith('http://localhost:') || cleanOrigin.startsWith('http://127.0.0.1:'))) ||
         (process.env.ALLOW_VERCEL_PREVIEWS === 'true' && cleanOrigin.endsWith('.vercel.app'))
@@ -122,6 +125,7 @@ app.use('/api/branches', branchRoutes);
 app.use('/api/teachers', teacherRoutes);
 app.use('/api/students', studentRoutes);
 app.use('/api/results', studentRoutes);
+app.use('/api/achievements', studentRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/news', newsRoutes);
 app.use('/api/events', eventRoutes);
@@ -132,16 +136,20 @@ app.use('/api/translations', translationRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/chat', aiRoutes);
 
-// Health check
-app.get('/api/health', (req, res) => {
+// Health checks (Root, /health, and /api/health for Render/cloud platforms)
+const healthHandler = (req, res) => {
   res.json({
     success: true,
+    service: 'NIS AI School Backend API',
     status: 'OK',
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV,
+    environment: process.env.NODE_ENV || 'development',
     version: '1.0.0',
   });
-});
+};
+app.get('/', healthHandler);
+app.get('/health', healthHandler);
+app.get('/api/health', healthHandler);
 
 // ─── Error Handling ──────────────────────────────────────────────────────────
 app.use(notFound);

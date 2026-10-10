@@ -133,13 +133,13 @@ export function Footer() {
             </h4>
             <ul className="space-y-2.5 text-sm">
               <li>
-                <Link to="/students" className="hover:text-slate-300 transition-colors">
-                  {t('results.title', 'Exam Results')}
+                <Link to="/achievements" className="hover:text-slate-300 transition-colors">
+                  {t('nav.achievements', 'Achievements')}
                 </Link>
               </li>
               <li>
                 <Link to="/students" className="hover:text-slate-300 transition-colors">
-                  {t('home.resultsSectionTitle', 'Olympiad Honors')}
+                  {t('nav.results', 'Student Honors')}
                 </Link>
               </li>
               <li>

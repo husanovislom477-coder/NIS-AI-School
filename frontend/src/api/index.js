@@ -89,6 +89,22 @@ export const adminAPI = {
   getUsers: (params) => api.get('/admin/users', { params }),
   updateUser: (id, data) => api.put(`/admin/users/${id}`, data),
   deleteUser: (id) => api.delete(`/admin/users/${id}`),
+  getActivities: (params) => api.get('/admin/activities', { params }),
+  getSettings: () => api.get('/admin/settings'),
+  updateSettings: (data) => api.put('/admin/settings', data),
+  getMedia: () => api.get('/admin/media'),
+  uploadMedia: (formData) => api.post('/admin/media/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  deleteMedia: (filename) => api.delete(`/admin/media/${filename}`),
+};
+
+// ─── Achievements ─────────────────────────────────────────────────────────────
+export const achievementAPI = {
+  getAll: (params) => api.get('/achievements', { params }),
+  getById: (id) => api.get(`/achievements/${id}`),
+  create: (data) => api.post('/achievements', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  update: (id, data) => api.put(`/achievements/${id}`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  delete: (id) => api.delete(`/achievements/${id}`),
+  getCount: () => api.get('/achievements/count'),
 };
 
 // ─── Projects & Startups ──────────────────────────────────────────────────────
@@ -101,13 +117,13 @@ export const projectAPI = {
   getCount: () => api.get('/projects/count'),
 };
 
-// ─── Student Results ──────────────────────────────────────────────────────────
+// ─── Student Results (Legacy Alias to Achievements) ───────────────────────────
 export const resultAPI = {
-  getAll: (params) => api.get('/results', { params }),
-  getById: (id) => api.get(`/results/${id}`),
-  create: (data) => api.post('/results', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
-  update: (id, data) => api.put(`/results/${id}`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
-  delete: (id) => api.delete(`/results/${id}`),
+  getAll: (params) => api.get('/achievements', { params }),
+  getById: (id) => api.get(`/achievements/${id}`),
+  create: (data) => api.post('/achievements', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  update: (id, data) => api.put(`/achievements/${id}`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  delete: (id) => api.delete(`/achievements/${id}`),
 };
 
 // ─── Languages (Dynamic Languages Management) ─────────────────────────────────

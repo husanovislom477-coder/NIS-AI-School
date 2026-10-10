@@ -6,6 +6,7 @@ import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import { LanguageProvider } from './context/LanguageContext';
 import App from './App';
+import './i18n';
 import './index.css';
 
 const queryClient = new QueryClient({

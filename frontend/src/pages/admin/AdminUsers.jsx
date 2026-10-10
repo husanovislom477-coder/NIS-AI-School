@@ -72,10 +72,15 @@ export default function AdminUsers() {
         <select
           value={roleFilter}
           onChange={(e) => { setRoleFilter(e.target.value); setPage(1); }}
-          className="input-field max-w-[160px] text-sm"
+          className="input-field max-w-[200px] text-sm cursor-pointer"
         >
           <option value="">Barcha rollar</option>
+          <option value="super_admin">Super Admin</option>
           <option value="admin">Admin</option>
+          <option value="content_editor">Content Editor</option>
+          <option value="branch_manager">Branch Manager</option>
+          <option value="teacher">Teacher</option>
+          <option value="reviewer">Reviewer</option>
           <option value="user">User</option>
         </select>
       </div>
@@ -225,29 +230,32 @@ export default function AdminUsers() {
 
               <div className="space-y-3 mb-6">
                 <label className="block text-xs font-semibold text-slate-500 uppercase">Tizim roli</label>
-                <div className="grid grid-cols-2 gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setEditUser({ ...editUser, role: 'user' })}
-                    className={`p-3 rounded-xl border text-sm font-medium text-center transition-all ${
-                      editUser.role === 'user'
-                        ? 'border-blue-600 bg-blue-50 text-blue-700 font-bold'
-                        : 'border-slate-200 text-slate-600 hover:bg-slate-50'
-                    }`}
-                  >
-                    User
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setEditUser({ ...editUser, role: 'admin' })}
-                    className={`p-3 rounded-xl border text-sm font-medium text-center transition-all ${
-                      editUser.role === 'admin'
-                        ? 'border-blue-600 bg-blue-50 text-blue-700 font-bold'
-                        : 'border-slate-200 text-slate-600 hover:bg-slate-50'
-                    }`}
-                  >
-                    Admin
-                  </button>
+                <div className="grid grid-cols-2 gap-2 max-h-56 overflow-y-auto no-scrollbar">
+                  {[
+                    { key: 'user', label: 'User (Oddiy)' },
+                    { key: 'reviewer', label: 'Reviewer (Kuzatuvchi)' },
+                    { key: 'teacher', label: 'Teacher (Ustoz)' },
+                    { key: 'branch_manager', label: 'Branch Manager' },
+                    { key: 'content_editor', label: 'Content Editor' },
+                    { key: 'admin', label: 'Admin' },
+                    { key: 'super_admin', label: 'Super Admin' },
+                  ].map((r) => {
+                    const isSelected = (editUser.role || '').toLowerCase() === r.key;
+                    return (
+                      <button
+                        key={r.key}
+                        type="button"
+                        onClick={() => setEditUser({ ...editUser, role: r.key })}
+                        className={`p-2 rounded-xl border text-xs font-medium text-left transition-all cursor-pointer ${
+                          isSelected
+                            ? 'border-blue-600 bg-blue-50 text-blue-700 font-bold shadow-2xs'
+                            : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                        }`}
+                      >
+                        {r.label}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 

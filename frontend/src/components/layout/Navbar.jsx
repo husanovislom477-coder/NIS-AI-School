@@ -15,6 +15,7 @@ import {
 } from 'react-icons/fi';
 import Button from '../ui/Button';
 import PagesSelector from './PagesSelector';
+import LanguageSelector from '../common/LanguageSelector';
 import { useLanguage } from '../../context/LanguageContext';
 
 export function Navbar() {
@@ -108,6 +109,9 @@ export function Navbar() {
 
           {/* Right Action Controls */}
           <div className="flex items-center gap-2">
+            {/* Multilingual Selector with Flags */}
+            <LanguageSelector />
+
             {/* Search Trigger */}
             <button
               type="button"

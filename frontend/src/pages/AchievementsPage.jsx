@@ -39,14 +39,15 @@ export default function AchievementsPage() {
   const dbResults = data?.data?.data || [];
   const achievements = dbResults.map((r, i) => ({
     id: r.id || r._id,
-    title: r.description || `${r.examType} Natijasi — ${r.score}`,
+    title: r.title || r.description || `${r.examType || r.category || 'Olimpiada'} — ${r.score || r.award || ''}`,
     winner: r.studentName,
-    result: `${r.examType}: ${r.score}`,
-    level: r.examType === 'IOI' || r.examType === 'IAIO' ? 'Xalqaro' : 'Respublika',
+    result: r.award || (r.score ? `${r.examType}: ${r.score}` : r.category || 'G‘olib'),
+    level: r.category || (r.examType === 'IOI' || r.examType === 'IAIO' ? 'Xalqaro' : 'Respublika'),
     year: String(r.year || 2026),
-    location: r.branch?.name || "NIS Kampus",
+    location: r.branch?.name || r.branch || "NIS Kampus",
     color: i % 3 === 0 ? 'yellow' : i % 3 === 1 ? 'amber' : 'blue',
-    desc: r.description || `${r.studentName} ${r.year || 2026}-yilda ${r.examType} bo'yicha ${r.score} natijaga erishdi.`,
+    desc: r.description || `${r.studentName} ${r.year || 2026}-yilda ${r.examType || r.category || 'tanlov'} bo'yicha yuksak natijaga erishdi.`,
+    certificatePhoto: r.certificatePhoto,
   }));
 
   return (
@@ -86,8 +87,8 @@ export default function AchievementsPage() {
         <div className="container-custom relative z-10">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
-              { label: t('achievements.totalResults', 'Jami natijalar'), value: String(dbResults.length), icon: FiStar },
-              { label: t('achievements.competitions', "Imtihon turlari"), value: String(new Set(dbResults.map(r => r.examType)).size || (dbResults.length > 0 ? 1 : 0)), icon: FiAward },
+              { label: t('achievements.totalResults', 'Jami yutuqlar'), value: String(dbResults.length), icon: FiStar },
+              { label: t('achievements.competitions', "Yo'nalishlar"), value: String(new Set(dbResults.map(r => r.category || r.examType)).size || (dbResults.length > 0 ? 1 : 0)), icon: FiAward },
               { label: t('achievements.studentsCount', "G'olib o'quvchilar"), value: String(dbResults.length), icon: FiGlobe },
               { label: t('achievements.academicYear', 'O‘quv yili'), value: '2025-2026', icon: FiCalendar },
             ].map((s, i) => (
@@ -120,9 +121,9 @@ export default function AchievementsPage() {
             viewport={{ once: true }}
             className="mb-10 text-center max-w-xl mx-auto"
           >
-            <span className="badge-blue mb-3">{t('achievements.recentResults', "So'nggi natijalar")}</span>
-            <h2 className="section-heading">{t('achievements.resultsList', "G'alabalar Ro'yxati")}</h2>
-            <p className="text-slate-500 text-sm mt-2">{t('achievements.competitionsDesc', "Dunyodagi eng qiyin informatika va sun'iy intellekt bellashuvlari")}</p>
+            <span className="badge-blue mb-3">{t('achievements.recentResults', "So'nggi yutuqlar")}</span>
+            <h2 className="section-heading">{t('achievements.resultsList', "Yutuqlar va G'alabalar")}</h2>
+            <p className="text-slate-500 text-sm mt-2">{t('achievements.competitionsDesc', "Dunyodagi eng nufuzli olimpiada va intellektual bellashuvlar natijalari")}</p>
           </motion.div>
 
           {isLoading ? (
@@ -136,8 +137,8 @@ export default function AchievementsPage() {
               <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-blue-100">
                 <FiAward size={28} />
               </div>
-              <h3 className="text-lg font-bold text-slate-800">{t('achievements.noResults', 'Hozircha natijalar kiritilmagan')}</h3>
-              <p className="text-sm text-slate-500 mt-1 max-w-sm mx-auto">{t('achievements.noResultsDesc', "O'quvchilar yutuqlari rasmiy imtihon natijalari e'lon qilingach bu yerda ko'rinadi.")}</p>
+              <h3 className="text-lg font-bold text-slate-800">{t('achievements.noResults', 'Hozircha yutuqlar kiritilmagan')}</h3>
+              <p className="text-sm text-slate-500 mt-1 max-w-sm mx-auto">{t('achievements.noResultsDesc', "O'quvchilar yutuqlari va sertifikatlari bu yerda aks etadi.")}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

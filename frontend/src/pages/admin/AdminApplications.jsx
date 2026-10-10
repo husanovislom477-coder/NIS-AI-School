@@ -2,37 +2,33 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { applicationAPI } from '../../api';
 import toast from 'react-hot-toast';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
-  FiSearch,
-  FiFilter,
-  FiEye,
-  FiCheck,
-  FiX,
-  FiFileText,
-  FiUser,
-  FiPhone,
-  FiMail,
-  FiCalendar,
-  FiMapPin,
-  FiAward,
+  FiEye, FiCheck, FiX, FiUser, FiPhone, FiMail,
+  FiCalendar, FiMapPin, FiAward, FiClock, FiFileText,
+  FiMessageSquare, FiTrash2
 } from 'react-icons/fi';
+import AdminDataTable from '../../components/admin/AdminDataTable';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function AdminApplications() {
+  const { t } = useLanguage();
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(15);
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState('');
   const [selectedApp, setSelectedApp] = useState(null);
   const [newStatus, setNewStatus] = useState('');
-  const [adminNotes, setAdminNotes] = useState('');
+  const [internalNotes, setInternalNotes] = useState('');
 
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
-    queryKey: ['admin-applications', page, search, status],
+    queryKey: ['admin-applications', page, pageSize, search, status],
     queryFn: () =>
       applicationAPI.getAllAdmin({
         page,
-        limit: 15,
+        limit: pageSize,
         search,
         status: status || undefined,
       }),
@@ -40,15 +36,15 @@ export default function AdminApplications() {
 
   const applications = data?.data?.data || [];
   const total = data?.data?.total || 0;
-  const pages = data?.data?.pages || 1;
 
   // Status mutation
   const statusMutation = useMutation({
-    mutationFn: ({ id, status, adminNotes }) =>
-      applicationAPI.updateStatus(id, { status, adminNotes }),
+    mutationFn: ({ id, status, internalNotes }) =>
+      applicationAPI.updateStatus(id, { status, internalNotes }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-applications'] });
-      toast.success('Ariza holati yangilandi!');
+      queryClient.invalidateQueries({ queryKey: ['admin-stats'] });
+      toast.success('Ariza holati va eslatma muvaffaqiyatli saqlandi!');
       setSelectedApp(null);
     },
     onError: (err) => {
@@ -58,8 +54,8 @@ export default function AdminApplications() {
 
   const handleOpenModal = (app) => {
     setSelectedApp(app);
-    setNewStatus(app.status);
-    setAdminNotes(app.adminNotes || '');
+    setNewStatus(app.status || 'NEW');
+    setInternalNotes(app.internalNotes || '');
   };
 
   const handleSaveStatus = () => {
@@ -67,319 +63,280 @@ export default function AdminApplications() {
     statusMutation.mutate({
       id: selectedApp._id || selectedApp.id,
       status: newStatus,
-      adminNotes,
+      internalNotes,
     });
   };
 
   const getStatusBadge = (st) => {
     switch (st) {
+      case 'ACCEPTED':
       case 'APPROVED':
-        return <span className="badge bg-emerald-100 text-emerald-800">Qabul qilindi</span>;
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Qabul qilindi
+          </span>
+        );
       case 'REVIEWING':
-        return <span className="badge bg-blue-100 text-blue-800">Ko'rilmoqda</span>;
-      case 'CONTACTED':
-        return <span className="badge bg-purple-100 text-purple-800">Bog'lanildi</span>;
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-500" /> Suhbatda
+          </span>
+        );
       case 'REJECTED':
-        return <span className="badge bg-rose-100 text-rose-800">Rad etildi</span>;
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
+            <span className="w-1.5 h-1.5 rounded-full bg-rose-500" /> Rad etildi
+          </span>
+        );
       default:
-        return <span className="badge bg-amber-100 text-amber-800">Kutilmoqda</span>;
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-500" /> Yangi
+          </span>
+        );
     }
   };
 
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+  const columns = [
+    {
+      key: 'fullName',
+      label: 'Arizachi',
+      render: (v, item) => (
         <div>
-          <h1 className="text-xl font-bold font-display text-slate-900">
-            Qabul Arizalari Boshqaruvi
-          </h1>
-          <p className="text-xs text-slate-500">
-            NIS AI School ga topshirilgan barcha o'quvchi arizalari (Jami: {total} ta)
-          </p>
+          <p className="font-bold text-slate-900 text-xs">{v}</p>
+          <p className="text-[11px] text-slate-400 font-mono mt-0.5">{item.email}</p>
         </div>
-      </div>
+      ),
+    },
+    {
+      key: 'phone',
+      label: 'Telefon',
+      render: (v) => <span className="font-mono text-xs text-slate-700 font-semibold">{v || '—'}</span>,
+    },
+    {
+      key: 'selectedProgram',
+      label: 'Dastur',
+      render: (v) => (
+        <span className="badge-blue text-[10px] font-bold">
+          {v || 'AI & Data Science'}
+        </span>
+      ),
+    },
+    {
+      key: 'status',
+      label: 'Holat',
+      render: (v) => getStatusBadge(v),
+    },
+    {
+      key: 'createdAt',
+      label: 'Sana',
+      render: (v) => (
+        <span className="text-[11px] text-slate-500 font-mono">
+          {v ? new Date(v).toLocaleDateString() : '—'}
+        </span>
+      ),
+    },
+  ];
 
-      {/* Filter and Search Bar */}
-      <div className="card p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-        <div className="relative w-full sm:w-80">
-          <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
-            placeholder="Ism, email, telefon yoki ariza ID..."
-            className="input-field pl-10 text-xs py-2"
-          />
-        </div>
+  const filterOptions = [
+    {
+      key: 'status',
+      label: 'Holat',
+      options: [
+        { label: 'Yangi (New)', value: 'NEW' },
+        { label: 'Suhbatda (Reviewing)', value: 'REVIEWING' },
+        { label: 'Qabul qilindi (Accepted)', value: 'ACCEPTED' },
+        { label: 'Rad etildi (Rejected)', value: 'REJECTED' },
+      ],
+    },
+  ];
 
-        <div className="flex items-center gap-2 w-full sm:w-auto">
-          <FiFilter size={14} className="text-slate-400" />
-          <select
-            value={status}
-            onChange={(e) => {
-              setStatus(e.target.value);
-              setPage(1);
-            }}
-            className="input-field text-xs py-2 w-full sm:w-48"
-          >
-            <option value="">Barcha holatlar</option>
-            <option value="PENDING">Kutilmoqda (PENDING)</option>
-            <option value="REVIEWING">Ko'rilmoqda (REVIEWING)</option>
-            <option value="CONTACTED">Bog'lanildi (CONTACTED)</option>
-            <option value="APPROVED">Qabul qilindi (APPROVED)</option>
-            <option value="REJECTED">Rad etildi (REJECTED)</option>
-          </select>
-        </div>
-      </div>
+  return (
+    <div>
+      <AdminDataTable
+        title="Qabul Arizalari Boshqaruvi (Admissions)"
+        subtitle="NIS AI School 2026-2027 o'quv yili uchun barcha qabul arizalari"
+        data={applications}
+        columns={columns}
+        isLoading={isLoading}
+        total={total}
+        page={page}
+        onPageChange={setPage}
+        pageSize={pageSize}
+        onPageSizeChange={setPageSize}
+        search={search}
+        onSearchChange={(v) => { setSearch(v); setPage(1); }}
+        filterOptions={filterOptions}
+        activeFilters={{ status }}
+        onFilterChange={(_, val) => { setStatus(val); setPage(1); }}
+        onEdit={(item) => handleOpenModal(item)}
+        exportFilename="nis_ai_school_applications.csv"
+      />
 
-      {/* Table Container */}
-      <div className="card overflow-hidden">
-        {isLoading ? (
-          <div className="p-16 text-center">
-            <div className="spinner mx-auto mb-2" />
-            <p className="text-xs text-slate-400">Arizalar yuklanmoqda...</p>
-          </div>
-        ) : applications.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-slate-600">
-              <thead className="bg-slate-50 text-slate-700 font-semibold border-b border-slate-200">
-                <tr>
-                  <th className="py-3 px-4">Ariza ID</th>
-                  <th className="py-3 px-4">Ariza beruvchi</th>
-                  <th className="py-3 px-4">Filial</th>
-                  <th className="py-3 px-4">Yo'nalish & Sinf</th>
-                  <th className="py-3 px-4">Sana</th>
-                  <th className="py-3 px-4">Holati</th>
-                  <th className="py-3 px-4 text-right">Amal</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {applications.map((app) => (
-                  <tr key={app._id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="py-3 px-4 font-mono font-bold text-school-700">
-                      {app.applicationNumber}
-                    </td>
-                    <td className="py-3 px-4">
-                      <p className="font-semibold text-slate-900">{app.applicantName}</p>
-                      <p className="text-[11px] text-slate-400">{app.phone} · {app.email}</p>
-                    </td>
-                    <td className="py-3 px-4 font-medium text-slate-800">
-                      {app.campusName}
-                    </td>
-                    <td className="py-3 px-4">
-                      <p className="font-medium text-slate-800">{app.direction}</p>
-                      <span className="text-[11px] text-slate-400">{app.desiredGrade}-sinf ({app.applicationType})</span>
-                    </td>
-                    <td className="py-3 px-4 text-slate-500">
-                      {new Date(app.createdAt).toLocaleDateString('uz-UZ')}
-                    </td>
-                    <td className="py-3 px-4">
-                      {getStatusBadge(app.status)}
-                    </td>
-                    <td className="py-3 px-4 text-right">
-                      <button
-                        type="button"
-                        onClick={() => handleOpenModal(app)}
-                        className="btn-outline py-1.5 px-3 text-xs"
-                      >
-                        <FiEye size={13} /> Ko'rish
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <div className="p-16 text-center text-xs text-slate-400">
-            Arizalar topilmadi.
-          </div>
-        )}
+      {/* View & Update Status Modal */}
+      <AnimatePresence>
+        {selectedApp && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs"
+              onClick={() => setSelectedApp(null)}
+            />
 
-        {/* Pagination */}
-        {pages > 1 && (
-          <div className="flex items-center justify-between p-4 border-t border-slate-100">
-            <span className="text-xs text-slate-500">
-              Sahifa {page} / {pages}
-            </span>
-            <div className="flex gap-1.5">
-              <button
-                type="button"
-                disabled={page <= 1}
-                onClick={() => setPage(page - 1)}
-                className="btn-outline py-1 px-3 text-xs disabled:opacity-40"
-              >
-                Oldingi
-              </button>
-              <button
-                type="button"
-                disabled={page >= pages}
-                onClick={() => setPage(page + 1)}
-                className="btn-outline py-1 px-3 text-xs disabled:opacity-40"
-              >
-                Keyingi
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Details & Status Modal */}
-      {selectedApp && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
-          <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 shadow-2xl border border-slate-100 space-y-6 animate-scale-up">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <div>
-                <span className="text-xs font-mono font-bold text-school-700 bg-school-50 px-2.5 py-0.5 rounded-lg border border-school-200">
-                  {selectedApp.applicationNumber}
-                </span>
-                <h2 className="text-xl font-bold font-display text-slate-900 mt-1">
-                  {selectedApp.applicantName}
-                </h2>
-              </div>
-              <button
-                type="button"
-                onClick={() => setSelectedApp(null)}
-                className="p-2 text-slate-400 hover:text-slate-700 rounded-full hover:bg-slate-100"
-              >
-                <FiX size={20} />
-              </button>
-            </div>
-
-            {/* Application Data Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-              <div className="space-y-1">
-                <span className="text-slate-400">Telefon:</span>
-                <p className="font-semibold text-slate-800">{selectedApp.phone}</p>
-              </div>
-              <div className="space-y-1">
-                <span className="text-slate-400">Email:</span>
-                <p className="font-semibold text-slate-800">{selectedApp.email}</p>
-              </div>
-              <div className="space-y-1">
-                <span className="text-slate-400">Tug'ilgan sana & Jinsi:</span>
-                <p className="font-semibold text-slate-800">{selectedApp.birthDate || 'Kiritilmagan'} ({selectedApp.gender || '—'})</p>
-              </div>
-              <div className="space-y-1">
-                <span className="text-slate-400">Yashash hududi:</span>
-                <p className="font-semibold text-slate-800">{selectedApp.region} {selectedApp.address && `· ${selectedApp.address}`}</p>
-              </div>
-              <div className="space-y-1">
-                <span className="text-slate-400">Ota-onasi:</span>
-                <p className="font-semibold text-slate-800">{selectedApp.parentName || '—'} {selectedApp.parentPhone && `(${selectedApp.parentPhone})`}</p>
-              </div>
-              <div className="space-y-1">
-                <span className="text-slate-400">Hozirgi maktabi & sinfi:</span>
-                <p className="font-semibold text-slate-800">{selectedApp.currentSchool} ({selectedApp.currentGrade}-sinf)</p>
-              </div>
-              <div className="space-y-1">
-                <span className="text-slate-400">Tanlangan filial:</span>
-                <p className="font-semibold text-school-700">{selectedApp.campusName}</p>
-              </div>
-              <div className="space-y-1">
-                <span className="text-slate-400">Yo'nalish va Ariza turi:</span>
-                <p className="font-semibold text-slate-800">{selectedApp.direction} · {selectedApp.applicationType}</p>
-              </div>
-              {selectedApp.ieltsScore && (
-                <div className="space-y-1">
-                  <span className="text-slate-400">IELTS bali:</span>
-                  <p className="font-bold text-emerald-700">{selectedApp.ieltsScore}</p>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="relative bg-white rounded-3xl shadow-elevation-3 w-full max-w-xl max-h-[92vh] overflow-y-auto z-10 border border-slate-100"
+            >
+              <div className="flex items-center justify-between p-5 border-b border-slate-100 sticky top-0 bg-white/95 backdrop-blur-md z-10">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+                    <FiUser size={18} />
+                  </div>
+                  <div>
+                    <h3 className="font-bold font-display text-slate-900 text-base">
+                      {selectedApp.fullName}
+                    </h3>
+                    <p className="text-[11px] text-slate-400">
+                      Ariza raqami: {selectedApp.applicationNumber || `#NIS-${selectedApp.id?.slice(-6) || '2026'}`}
+                    </p>
+                  </div>
                 </div>
-              )}
-              {selectedApp.satScore && (
-                <div className="space-y-1">
-                  <span className="text-slate-400">SAT bali:</span>
-                  <p className="font-bold text-blue-700">{selectedApp.satScore}</p>
-                </div>
-              )}
-            </div>
-
-            {selectedApp.motivation && (
-              <div className="space-y-1">
-                <span className="text-xs font-semibold text-slate-700">Motivatsion Xat:</span>
-                <p className="p-3 bg-slate-50 rounded-xl border border-slate-100 text-xs text-slate-600 leading-relaxed whitespace-pre-wrap">
-                  {selectedApp.motivation}
-                </p>
-              </div>
-            )}
-
-            {/* Document Attachments */}
-            {selectedApp.documents && selectedApp.documents.length > 0 && (
-              <div className="space-y-2">
-                <span className="text-xs font-semibold text-slate-700">Yuklangan hujjatlar:</span>
-                <div className="flex flex-wrap gap-2">
-                  {selectedApp.documents.map((doc, idx) => (
-                    <a
-                      key={idx}
-                      href={doc.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="px-3 py-1.5 rounded-xl bg-blue-50 text-school-700 hover:bg-blue-100 text-xs font-medium border border-blue-200 flex items-center gap-1.5"
-                    >
-                      <FiFileText size={14} /> {doc.name || `Hujjat #${idx + 1}`}
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Status Change Form */}
-            <div className="pt-4 border-t border-slate-100 space-y-3">
-              <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
-                Ariza Holatini O'zgartirish
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="label">Yangi holat</label>
-                  <select
-                    value={newStatus}
-                    onChange={(e) => setNewStatus(e.target.value)}
-                    className="input-field text-xs py-2"
-                  >
-                    <option value="PENDING">Kutilmoqda (PENDING)</option>
-                    <option value="REVIEWING">Ko'rilmoqda (REVIEWING)</option>
-                    <option value="CONTACTED">Bog'lanildi (CONTACTED)</option>
-                    <option value="APPROVED">Qabul qilindi (APPROVED)</option>
-                    <option value="REJECTED">Rad etildi (REJECTED)</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="label">Ichki komissiya izohi</label>
-                  <input
-                    type="text"
-                    value={adminNotes}
-                    onChange={(e) => setAdminNotes(e.target.value)}
-                    placeholder="Masalan: 12-oktabr suhbatga chaqirildi"
-                    className="input-field text-xs py-2"
-                  />
-                </div>
-              </div>
-
-              <div className="flex justify-end gap-2 pt-2">
                 <button
                   type="button"
                   onClick={() => setSelectedApp(null)}
-                  className="btn-outline py-2 px-4 text-xs"
+                  className="p-1.5 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors"
                 >
-                  Bekor qilish
-                </button>
-                <button
-                  type="button"
-                  disabled={statusMutation.isPending}
-                  onClick={handleSaveStatus}
-                  className="btn-primary py-2 px-5 text-xs font-bold"
-                >
-                  {statusMutation.isPending ? 'Saqlanmoqda...' : 'Saqlash'}
+                  <FiX size={18} />
                 </button>
               </div>
-            </div>
+
+              <div className="p-6 space-y-5">
+                {/* Applicant Info Cards */}
+                <div className="grid grid-cols-2 gap-3 text-xs">
+                  <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100">
+                    <span className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Telefon</span>
+                    <p className="font-semibold text-slate-800 font-mono mt-0.5">{selectedApp.phone || '—'}</p>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100">
+                    <span className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Email</span>
+                    <p className="font-semibold text-slate-800 font-mono mt-0.5 truncate">{selectedApp.email || '—'}</p>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100">
+                    <span className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Tanlangan Dastur</span>
+                    <p className="font-semibold text-blue-700 mt-0.5">{selectedApp.selectedProgram || 'AI & Data Science'}</p>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100">
+                    <span className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Topshirilgan Sana</span>
+                    <p className="font-semibold text-slate-800 font-mono mt-0.5">
+                      {selectedApp.createdAt ? new Date(selectedApp.createdAt).toLocaleString() : '—'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Message / Motivation */}
+                {selectedApp.message && (
+                  <div>
+                    <label className="label flex items-center gap-1.5 text-xs">
+                      <FiMessageSquare size={13} className="text-slate-500" />
+                      <span>Arizachi Xabari / Motivatsion Xat</span>
+                    </label>
+                    <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-700 leading-relaxed max-h-36 overflow-y-auto">
+                      {selectedApp.message}
+                    </div>
+                  </div>
+                )}
+
+                {/* Audit History Log */}
+                {Array.isArray(selectedApp.history) && selectedApp.history.length > 0 && (
+                  <div>
+                    <label className="label flex items-center gap-1.5 text-xs">
+                      <FiClock size={13} className="text-slate-500" />
+                      <span>Ariza O'zgarishlar Tarixi (History Log)</span>
+                    </label>
+                    <div className="space-y-1.5 max-h-32 overflow-y-auto p-2 bg-slate-50/70 rounded-xl border border-slate-100">
+                      {selectedApp.history.map((h, i) => (
+                        <div key={i} className="text-[11px] text-slate-600 flex items-center justify-between">
+                          <span>
+                            <strong>{h.status}</strong>: {h.note || 'Status updated'} by {h.by || 'Admin'}
+                          </span>
+                          <span className="text-[10px] text-slate-400 font-mono">
+                            {new Date(h.at).toLocaleDateString()}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Status Changing Form */}
+                <div className="border-t border-slate-100 pt-4 space-y-4">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700">
+                    Holatni O'zgartirish & Ichki Eslatma
+                  </h4>
+
+                  <div>
+                    <label className="label">Yangi Holat (Status)</label>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      {[
+                        { val: 'NEW', label: 'Yangi', color: 'border-amber-300 bg-amber-50 text-amber-800' },
+                        { val: 'REVIEWING', label: 'Suhbatda', color: 'border-blue-300 bg-blue-50 text-blue-800' },
+                        { val: 'ACCEPTED', label: 'Qabul qilindi', color: 'border-emerald-300 bg-emerald-50 text-emerald-800' },
+                        { val: 'REJECTED', label: 'Rad etildi', color: 'border-rose-300 bg-rose-50 text-rose-800' },
+                      ].map((st) => (
+                        <button
+                          key={st.val}
+                          type="button"
+                          onClick={() => setNewStatus(st.val)}
+                          className={`p-2 rounded-xl text-xs font-bold border transition-all ${
+                            newStatus === st.val
+                              ? `${st.color} shadow-xs ring-2 ring-blue-500/20`
+                              : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
+                          }`}
+                        >
+                          {st.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="label">Ichki Eslatma (Internal Notes)</label>
+                    <textarea
+                      rows={3}
+                      value={internalNotes}
+                      onChange={(e) => setInternalNotes(e.target.value)}
+                      placeholder="Masalan: 12-oktyabr soat 14:00 ga suhbat belgilandi, imtihon natijasi tekshirildi..."
+                      className="input-field text-xs"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedApp(null)}
+                    className="px-4 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors"
+                  >
+                    Yopish
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSaveStatus}
+                    disabled={statusMutation.isPending}
+                    className="btn-primary text-xs py-2 px-5 font-bold shadow-sm disabled:opacity-60"
+                  >
+                    {statusMutation.isPending ? 'Saqlanmoqda...' : 'Saqlash'}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
     </div>
   );
 }

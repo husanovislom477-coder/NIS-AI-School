@@ -279,7 +279,7 @@ export default function AdminStudents() {
 
   return (
     <AdminCRUD
-      title={t('admin.results', 'O‘quvchilar Natijalari (Exam Results)')}
+      title={t('admin.results', 'O‘quvchilar Yutuqlari (Achievements)')}
       queryKey="admin-students"
       fetchFn={studentAPI.getAll}
       deleteFn={studentAPI.delete}

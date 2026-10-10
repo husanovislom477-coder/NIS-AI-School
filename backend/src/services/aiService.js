@@ -234,7 +234,7 @@ function getGeminiModel() {
       }
     } catch (_) {}
   }
-  return (process.env.GEMINI_MODEL || 'gemini-2.5-flash').replace(/^["']|["']$/g, '').trim();
+  return (process.env.GEMINI_MODEL || 'gemini-flash-latest').replace(/^["']|["']$/g, '').trim();
 }
 
 /**
@@ -305,10 +305,16 @@ CRITICAL OPERATIONAL RULES:
    - If user asks for specific school info not found in the verified data, state clearly and politely:
      - Uzbek: "Ushbu ma'lumot NIS AI School rasmiy ma'lumotlar bazasida hozircha mavjud emas. Aniq ma'lumot uchun maktab ma'muriyatiga murojaat qilishingiz mumkin."
      - English: "This information is currently not available in the NIS AI School official records. Please contact school administration."
-4. General Academic & Coding Inquiries:
+4. Clean Output & Natural Tone:
+   - Answer in clean, natural, elegant conversational paragraphs.
+   - DO NOT clutter responses with unnecessary raw Markdown hashes (###), excessive bullet hierarchies, asterisks, or decorative symbols.
+   - When writing code, always use clean fenced code blocks with the language tag.
+   - When answering mathematics, present formulas and calculations clearly.
+   - For simple conversational queries, keep answers concise and natural without robotic headers.
+5. General Academic & Coding Inquiries:
    - You are also an expert tutor for academic topics: programming (Python, C++, JavaScript, React, PyTorch, ROS2, algorithms), mathematics, science, and exam preparation (IELTS, SAT, IOI/IAIO Olympiads).
-   - Provide clear, step-by-step explanations in clean Markdown with code blocks.
-5. Multi-turn Conversation Context:
+   - Provide clear, step-by-step explanations.
+6. Multi-turn Conversation Context:
    - Follow the conversation history naturally and maintain coherent multi-turn context.
 
 ${schoolContext}`;
@@ -327,39 +333,65 @@ ${schoolContext}`;
     { role: 'user', parts: [{ text: userQuery }] },
   ];
 
-  const modelName = getGeminiModel();
+  const primaryModel = getGeminiModel();
+  const candidateModels = Array.from(new Set([
+    primaryModel,
+    'gemini-3.8-flash',
+    'gemini-3.8-flash-lite',
+    'gemini-3.5-flash',
+    'gemini-flash-latest',
+  ]));
 
   try {
     const ai = new GoogleGenAI({ apiKey });
+    let successfulResponse = null;
+    let successfulModel = primaryModel;
+    let lastError = null;
 
-    const response = await ai.models.generateContent({
-      model: modelName,
-      contents,
-      config: {
-        systemInstruction: systemPrompt,
-        temperature: 0.3,
-        maxOutputTokens: 1024,
-      },
-    });
+    for (const modelToTry of candidateModels) {
+      try {
+        const response = await ai.models.generateContent({
+          model: modelToTry,
+          contents,
+          config: {
+            systemInstruction: systemPrompt,
+            temperature: 0.3,
+            maxOutputTokens: 1024,
+          },
+        });
 
-    const replyText = response.text ? response.text.trim() : '';
-
-    if (!replyText) {
-      return {
-        success: false,
-        error: 'EMPTY_RESPONSE',
-        message:
-          language === 'uz'
-            ? "Gemini dan bo'sh javob qaytdi. Iltimos, savolingizni qayta yozing."
-            : 'Received an empty response from Gemini. Please try asking again.',
-      };
+        if (response && response.text && response.text.trim()) {
+          successfulResponse = response;
+          successfulModel = modelToTry;
+          break;
+        }
+      } catch (tryErr) {
+        lastError = tryErr;
+        const msg = String(tryErr.message || '');
+        if (
+          msg.includes('503') ||
+          msg.includes('UNAVAILABLE') ||
+          msg.includes('404') ||
+          msg.includes('NOT_FOUND') ||
+          msg.includes('no longer available')
+        ) {
+          continue;
+        }
+        break;
+      }
     }
+
+    if (!successfulResponse) {
+      throw lastError || new Error('No response from Gemini models');
+    }
+
+    const replyText = successfulResponse.text.trim();
 
     return {
       success: true,
       message: replyText,
       actions: determineActions(userQuery, replyText),
-      model: modelName,
+      model: successfulModel,
     };
   } catch (err) {
     console.error('Google Gemini request error:', err.message || err);

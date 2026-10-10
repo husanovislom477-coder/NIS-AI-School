@@ -17,27 +17,9 @@
       "primaryColor": "#0066cc",
       "secondaryColor": "#00a3ff",
       "createdAt": "2026-10-06T04:52:48.062Z",
-      "updatedAt": "2026-10-06T05:07:11.467Z",
-      "lastLoginAt": "2026-10-06T05:07:11.467Z"
-    },
-    {
-      "id": "usr_student_01",
-      "firstName": "Islomjon",
-      "lastName": "Alimov",
-      "middleName": "Bahrom o'g'li",
-      "email": "student@nis-ai.edu.uz",
-      "phone": "+998 90 123 45 67",
-      "passwordHash": "$2a$10$Vi8IIKryyMOSJsPB/77QFOeeYhsbu3PfFhxXh2OlH0Tb51baBPnfi",
-      "profileImage": "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=300",
-      "role": "USER",
-      "isActive": true,
-      "googleId": null,
-      "language": "uz",
-      "theme": "light",
-      "primaryColor": "#0066cc",
-      "secondaryColor": "#00a3ff",
-      "createdAt": "2026-10-06T04:52:48.065Z",
-      "updatedAt": "2026-10-06T04:52:48.065Z"
+      "updatedAt": "2026-10-10T05:10:00.079Z",
+      "lastLoginAt": "2026-10-10T05:10:00.079Z",
+      "languageCode": "uz"
     },
     {
       "id": "usr_1791280466637duulf",
@@ -60,94 +42,6 @@
       "createdAt": "2026-10-06T09:54:26.637Z",
       "updatedAt": "2026-10-09T08:56:22.202Z",
       "lastLoginAt": "2026-10-09T08:56:22.202Z"
-    },
-    {
-      "id": "usr_1791350272351qjdv5",
-      "_id": "usr_1791350272351qjdv5",
-      "firstName": "Islom",
-      "lastName": "Husanov",
-      "middleName": "",
-      "email": "tfyghjhuh@gmail.com",
-      "phone": "+998 97 628 51 06",
-      "passwordHash": "$2a$10$dlc5ioex4o/XMus8jv8WyeULoV23h9aXcjDlT1WpHu968V67zY0Q.",
-      "profileImage": "",
-      "role": "USER",
-      "isActive": true,
-      "googleId": null,
-      "language": "en",
-      "languageCode": "en",
-      "theme": "light",
-      "primaryColor": "#0066cc",
-      "secondaryColor": "#00a3ff",
-      "createdAt": "2026-10-07T05:17:52.351Z",
-      "updatedAt": "2026-10-07T05:20:42.021Z",
-      "lastLoginAt": null
-    },
-    {
-      "id": "usr_17913587432485k6nn",
-      "_id": "usr_17913587432485k6nn",
-      "firstName": "Islom",
-      "lastName": "Husanov",
-      "middleName": "",
-      "email": "hijfs@gmail.com",
-      "phone": "+998 97 628 51 06",
-      "passwordHash": "$2a$10$iDzyvlFO8dTe4Qu4HbXfROe8NWG0hLh1sr/7N.caOxfZjDv9KuiIa",
-      "profileImage": "",
-      "role": "USER",
-      "isActive": true,
-      "googleId": null,
-      "language": "uz",
-      "languageCode": "uz",
-      "theme": "light",
-      "primaryColor": "#0066cc",
-      "secondaryColor": "#00a3ff",
-      "createdAt": "2026-10-07T07:39:03.248Z",
-      "updatedAt": "2026-10-08T08:07:19.895Z",
-      "lastLoginAt": null
-    },
-    {
-      "id": "usr_1791523705442ef2r7",
-      "_id": "usr_1791523705442ef2r7",
-      "firstName": "Test",
-      "lastName": "User",
-      "middleName": "",
-      "email": "testuser_nis_auth@example.com",
-      "phone": "",
-      "passwordHash": "$2a$10$bG9lRpfCw5AHN9LTVLlIue8bgH3eboiJrkwjhhPwfY4jXntnrakaq",
-      "profileImage": "",
-      "role": "USER",
-      "isActive": true,
-      "googleId": null,
-      "language": "en",
-      "languageCode": "en",
-      "theme": "light",
-      "primaryColor": "#0066cc",
-      "secondaryColor": "#00a3ff",
-      "createdAt": "2026-10-09T05:28:25.442Z",
-      "updatedAt": "2026-10-09T05:28:31.871Z",
-      "lastLoginAt": "2026-10-09T05:28:31.871Z"
-    },
-    {
-      "id": "usr_1791536057531cweh4",
-      "_id": "usr_1791536057531cweh4",
-      "firstName": "Azizbek",
-      "lastName": "Karimov",
-      "middleName": "",
-      "email": "student_7017@nis-ai.edu.uz",
-      "phone": "",
-      "passwordHash": "$2a$10$dAoc6W1yyiZy2XJ1x95kq.NAQSTf5KvFqGr56.6bv3GBgdaXDD5Hm",
-      "profileImage": "",
-      "role": "USER",
-      "isActive": true,
-      "googleId": null,
-      "language": "en",
-      "languageCode": "en",
-      "theme": "light",
-      "primaryColor": "#0066cc",
-      "secondaryColor": "#00a3ff",
-      "createdAt": "2026-10-09T08:54:17.531Z",
-      "updatedAt": "2026-10-09T08:54:17.694Z",
-      "lastLoginAt": "2026-10-09T08:54:17.694Z"
     }
   ],
   "languages": [
@@ -175,7 +69,7 @@
       "isDefault": false,
       "order": 2,
       "createdAt": "2026-10-06T08:56:26.946Z",
-      "updatedAt": "2026-10-06T08:56:26.946Z"
+      "updatedAt": "2026-10-10T03:45:03.624Z"
     },
     {
       "id": "lang_ru",
@@ -262,11 +156,11 @@
       "nativeName": "中文",
       "flag": "🇨🇳",
       "direction": "ltr",
-      "isEnabled": true,
+      "isEnabled": false,
       "isDefault": false,
       "order": 9,
       "createdAt": "2026-10-06T08:56:26.946Z",
-      "updatedAt": "2026-10-06T08:56:26.946Z"
+      "updatedAt": "2026-10-10T03:47:32.076Z"
     },
     {
       "id": "lang_ja",
@@ -285,7 +179,7 @@
   "branches": [
     {
       "id": "br_tashkent_01",
-      "name": "Toshkent Bosh Kampus",
+      "name": "Namangan shahar Bosh Kampus",
       "description": "Sun'iy intellekt va robototexnika bo'yicha mintaqadagi eng yirik zamonaviy kampus. 1500+ o'quvchi uchun ilmiy laboratoriyalar va sport majmualari.",
       "address": "Toshkent sh., Mirzo Ulug'bek tumani, Universitet ko'chasi 7-uy",
       "phone": "+998 71 200 01 01",
@@ -296,7 +190,35 @@
       "video": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
       "workingHours": "08:00 - 18:30",
       "createdAt": "2026-10-06T04:52:48.065Z",
-      "updatedAt": "2026-10-06T04:52:48.065Z"
+      "updatedAt": "2026-10-10T04:31:02.380Z",
+      "shortName": "Namangan shahar",
+      "location": "Toshkent sh., Mirzo Ulug'bek tumani, Universitet ko'chasi 7-uy",
+      "email": "",
+      "established": "2007",
+      "studentCount": "0",
+      "teacherCount": "0",
+      "featured": "false",
+      "isActive": "true",
+      "translations": {
+        "uz": {
+          "name": "Namangan shahar Bosh Kampus",
+          "description": "Sun'iy intellekt va robototexnika bo'yicha mintaqadagi eng yirik zamonaviy kampus. 1500+ o'quvchi uchun ilmiy laboratoriyalar va sport majmualari.",
+          "address": "Toshkent sh., Mirzo Ulug'bek tumani, Universitet ko'chasi 7-uy",
+          "workingHours": "08:00 - 18:30"
+        },
+        "en": {
+          "name": "Namangan shahar Main Campus",
+          "description": "The premier modern artificial intelligence and robotics campus in Central Asia. Advanced research laboratories and sports facilities for 1,500+ students.",
+          "address": "7 University Street, Mirzo Ulugbek District, Tashkent",
+          "workingHours": "08:00 - 18:30"
+        },
+        "ru": {
+          "name": "Главный кампус в Ташкенте",
+          "description": "Крупнейший современный кампус по искусственному интеллекту и робототехнике в регионе. Научные лаборатории и спорткомплексы для 1500+ учащихся.",
+          "address": "г. Ташкент, Мирзо-Улугбекский р-н, ул. Университетская, 7",
+          "workingHours": "08:00 - 18:30"
+        }
+      }
     },
     {
       "id": "br_samarkand_02",
@@ -334,19 +256,21 @@
       "id": "bt_tash_uz",
       "branchId": "br_tashkent_01",
       "languageCode": "uz",
-      "name": "Toshkent Bosh Kampus",
+      "name": "Namangan shahar Bosh Kampus",
       "description": "Sun'iy intellekt va robototexnika bo'yicha mintaqadagi eng yirik zamonaviy kampus. 1500+ o'quvchi uchun ilmiy laboratoriyalar va sport majmualari.",
       "address": "Toshkent sh., Mirzo Ulug'bek tumani, Universitet ko'chasi 7-uy",
-      "workingHours": "08:00 - 18:30"
+      "workingHours": "08:00 - 18:30",
+      "updatedAt": "2026-10-10T04:31:02.381Z"
     },
     {
       "id": "bt_tash_en",
       "branchId": "br_tashkent_01",
       "languageCode": "en",
-      "name": "Tashkent Main Campus",
+      "name": "Namangan shahar Main Campus",
       "description": "The premier modern artificial intelligence and robotics campus in Central Asia. Advanced research laboratories and sports facilities for 1,500+ students.",
       "address": "7 University Street, Mirzo Ulugbek District, Tashkent",
-      "workingHours": "08:00 - 18:30"
+      "workingHours": "08:00 - 18:30",
+      "updatedAt": "2026-10-10T04:31:02.381Z"
     },
     {
       "id": "bt_tash_ru",
@@ -355,7 +279,8 @@
       "name": "Главный кампус в Ташкенте",
       "description": "Крупнейший современный кампус по искусственному интеллекту и робототехнике в регионе. Научные лаборатории и спорткомплексы для 1500+ учащихся.",
       "address": "г. Ташкент, Мирзо-Улугбекский р-н, ул. Университетская, 7",
-      "workingHours": "08:00 - 18:30"
+      "workingHours": "08:00 - 18:30",
+      "updatedAt": "2026-10-10T04:31:02.381Z"
     },
     {
       "id": "bt_sam_uz",
@@ -982,5 +907,121 @@
       "createdAt": "2026-10-06T04:52:48.065Z",
       "updatedAt": "2026-10-06T04:52:48.065Z"
     }
-  ]
+  ],
+  "activities": [
+    {
+      "id": "act_1791607424389_c9d3w",
+      "userId": "usr_admin_01",
+      "userName": "Admin NIS",
+      "action": "UPDATE_SETTINGS",
+      "entity": "Settings",
+      "details": "Updated school settings & parameters",
+      "ip": "",
+      "createdAt": "2026-10-10T04:43:44.389Z"
+    },
+    {
+      "id": "act_1791607416081_4u1ct",
+      "userId": "usr_admin_01",
+      "userName": "Admin NIS",
+      "action": "UPDATE_SETTINGS",
+      "entity": "Settings",
+      "details": "Updated school settings & parameters",
+      "ip": "",
+      "createdAt": "2026-10-10T04:43:36.081Z"
+    },
+    {
+      "id": "act_1791607393429_mcrvr",
+      "userId": "usr_admin_01",
+      "userName": "Admin NIS",
+      "action": "UPDATE_SETTINGS",
+      "entity": "Settings",
+      "details": "Updated school settings & parameters",
+      "ip": "",
+      "createdAt": "2026-10-10T04:43:13.429Z"
+    },
+    {
+      "id": "act_1791607386265_e1j9d",
+      "userId": "usr_admin_01",
+      "userName": "Admin NIS",
+      "action": "UPDATE_SETTINGS",
+      "entity": "Settings",
+      "details": "Updated school settings & parameters",
+      "ip": "",
+      "createdAt": "2026-10-10T04:43:06.265Z"
+    },
+    {
+      "id": "act_1791607328129_z3a6f",
+      "userId": "usr_admin_01",
+      "userName": "Admin NIS",
+      "action": "DELETE_USER",
+      "entity": "User",
+      "details": "Deleted user: testuser_nis_auth@example.com (Test User)",
+      "ip": "",
+      "createdAt": "2026-10-10T04:42:08.129Z"
+    },
+    {
+      "id": "act_1791607324614_shsa2",
+      "userId": "usr_admin_01",
+      "userName": "Admin NIS",
+      "action": "DELETE_USER",
+      "entity": "User",
+      "details": "Deleted user: student_7017@nis-ai.edu.uz (Azizbek Karimov)",
+      "ip": "",
+      "createdAt": "2026-10-10T04:42:04.614Z"
+    },
+    {
+      "id": "act_1791607321358_6btfa",
+      "userId": "usr_admin_01",
+      "userName": "Admin NIS",
+      "action": "DELETE_USER",
+      "entity": "User",
+      "details": "Deleted user: tfyghjhuh@gmail.com (Islom Husanov)",
+      "ip": "",
+      "createdAt": "2026-10-10T04:42:01.358Z"
+    },
+    {
+      "id": "act_1791607318516_d58sm",
+      "userId": "usr_admin_01",
+      "userName": "Admin NIS",
+      "action": "DELETE_USER",
+      "entity": "User",
+      "details": "Deleted user: hijfs@gmail.com (Islom Husanov)",
+      "ip": "",
+      "createdAt": "2026-10-10T04:41:58.516Z"
+    },
+    {
+      "id": "act_1791607313552_l9ose",
+      "userId": "usr_admin_01",
+      "userName": "Admin NIS",
+      "action": "DELETE_USER",
+      "entity": "User",
+      "details": "Deleted user: student@nis-ai.edu.uz (Islomjon Alimov)",
+      "ip": "",
+      "createdAt": "2026-10-10T04:41:53.552Z"
+    }
+  ],
+  "settings": {
+    "schoolName": "NIS AI School",
+    "contactEmail": "info@nis-ai.edu.uz",
+    "contactPhone": "+998 71 200 00 55",
+    "address": "Namangan shahar",
+    "defaultLanguage": "uz",
+    "allowRegistrations": true,
+    "maintenanceMode": true,
+    "bannerNotice": "",
+    "socialLinks": {
+      "telegram": "https://t.me/nis_ai_school",
+      "instagram": "https://instagram.com/nis_ai_school",
+      "youtube": "https://youtube.com/@nis_ai_school",
+      "github": "https://github.com/nis-ai-school"
+    },
+    "workingHours": "Dush - Shanba: 09:00 - 18:00",
+    "allowApplications": true,
+    "bannerActive": false,
+    "telegram": "https://t.me/nis_ai_school",
+    "instagram": "https://instagram.com/nis_ai_school",
+    "youtube": "https://youtube.com/@nis_ai_school",
+    "github": "https://github.com/nis-ai-school",
+    "updatedAt": "2026-10-10T04:43:44.387Z"
+  }
 }

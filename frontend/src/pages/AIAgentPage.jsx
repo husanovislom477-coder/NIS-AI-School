@@ -17,6 +17,7 @@ import {
 import { useLanguage } from '../context/LanguageContext';
 import { aiAPI } from '../api';
 import PageHeroBackground from '../components/common/PageHeroBackground';
+import MarkdownMessage from '../components/common/MarkdownMessage';
 
 export default function AIAgentPage() {
   const { t, language } = useLanguage();
@@ -256,7 +257,7 @@ export default function AIAgentPage() {
                         : 'bg-school-600 text-white rounded-tr-sm shadow-xs'
                     }`}
                   >
-                    <p className="whitespace-pre-wrap">{m.text}</p>
+                    <MarkdownMessage content={m.text} isAgent={isAgent} />
 
                     {/* Quick Action Navigation Buttons */}
                     {m.actions && m.actions.length > 0 && (

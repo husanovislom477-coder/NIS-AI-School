@@ -164,17 +164,19 @@ const getAllApplicationsAdmin = async (req, res, next) => {
 // @access Private/Admin
 const updateApplicationStatus = async (req, res, next) => {
   try {
-    let { status } = req.body;
-    status = (status || '').toUpperCase();
-    if (status === 'PENDING') status = 'NEW';
-    if (status === 'APPROVED') status = 'ACCEPTED';
+    let { status, internalNotes, note } = req.body;
+    if (status) {
+      status = (status || '').toUpperCase();
+      if (status === 'PENDING') status = 'NEW';
+      if (status === 'APPROVED') status = 'ACCEPTED';
 
-    const validStatuses = ['NEW', 'REVIEWING', 'ACCEPTED', 'REJECTED', 'CONTACTED'];
-    if (!validStatuses.includes(status)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Status NEW, REVIEWING, ACCEPTED yoki REJECTED bo\'lishi shart.',
-      });
+      const validStatuses = ['NEW', 'REVIEWING', 'ACCEPTED', 'REJECTED', 'CONTACTED'];
+      if (!validStatuses.includes(status)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Status NEW, REVIEWING, ACCEPTED yoki REJECTED bo\'lishi shart.',
+        });
+      }
     }
 
     const existing = await findApplicationById(req.params.id);
@@ -182,10 +184,16 @@ const updateApplicationStatus = async (req, res, next) => {
       return res.status(404).json({ success: false, message: 'Ariza topilmadi.' });
     }
 
-    const updated = await dbUpdateApplicationStatus(req.params.id, status);
+    const adminName = `${req.user?.firstName || 'Admin'} ${req.user?.lastName || ''}`.trim();
+    const updated = await dbUpdateApplicationStatus(req.params.id, status || existing.status, {
+      internalNotes: internalNotes !== undefined ? internalNotes : note,
+      adminName,
+      by: adminName,
+    });
+
     res.json({
       success: true,
-      message: 'Ariza holati muvaffaqiyatli o\'zgartirildi.',
+      message: 'Ariza ma\'lumotlari muvaffaqiyatli yangilandi.',
       data: updated,
     });
   } catch (error) {

@@ -39,10 +39,15 @@ import AdminApplications from './pages/admin/AdminApplications';
 import AdminBranches from './pages/admin/AdminBranches';
 import AdminTeachers from './pages/admin/AdminTeachers';
 import AdminStudents from './pages/admin/AdminStudents';
+import AdminAchievements from './pages/admin/AdminAchievements';
+import AdminProjects from './pages/admin/AdminProjects';
 import AdminNews from './pages/admin/AdminNews';
 import AdminEvents from './pages/admin/AdminEvents';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminLanguages from './pages/admin/AdminLanguages';
+import AdminMedia from './pages/admin/AdminMedia';
+import AdminActivityLogs from './pages/admin/AdminActivityLogs';
+import AdminSettings from './pages/admin/AdminSettings';
 
 // Protected Route component (Redirects to /login preserving destination)
 const PrivateRoute = ({ children }) => {
@@ -194,12 +199,17 @@ export default function App() {
         <Route path="applications" element={<AdminApplications />} />
         <Route path="branches" element={<AdminBranches />} />
         <Route path="teachers" element={<AdminTeachers />} />
-        <Route path="students" element={<AdminStudents />} />
+        <Route path="achievements" element={<AdminAchievements />} />
+        <Route path="students" element={<AdminAchievements />} />
+        <Route path="projects" element={<AdminProjects />} />
         <Route path="news" element={<AdminNews />} />
         <Route path="events" element={<AdminEvents />} />
+        <Route path="media" element={<AdminMedia />} />
         <Route path="languages" element={<AdminLanguages />} />
         <Route path="settings/languages" element={<AdminLanguages />} />
         <Route path="users" element={<AdminUsers />} />
+        <Route path="activities" element={<AdminActivityLogs />} />
+        <Route path="settings" element={<AdminSettings />} />
       </Route>
     </Routes>
   );
