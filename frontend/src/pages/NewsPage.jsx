@@ -86,39 +86,43 @@ export default function NewsPage() {
         <p className="text-sm text-slate-400 mb-6">{total} {t('news.newsCount', 'ta yangilik')}</p>
 
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {Array.from({ length: 6 }).map((_, i) => <div key={i} className="card p-4 animate-pulse h-72" />)}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-5">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="card p-3 sm:p-4 animate-pulse h-32 flex flex-row md:flex-col gap-3" />
+            ))}
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-5">
               {news.map((n, i) => (
                 <motion.div key={n._id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-                  className="card overflow-hidden group hover:-translate-y-1 transition-all duration-300"
+                  className="card overflow-hidden group hover:-translate-y-1 transition-all duration-300 flex flex-row md:flex-col h-full"
                 >
-                  <div className="relative h-48 bg-slate-100 overflow-hidden">
+                  <div className="relative w-28 xs:w-32 sm:w-40 md:w-full shrink-0 min-h-[110px] md:h-48 bg-slate-100 overflow-hidden">
                     {n.coverImage ? (
                       <img src={getImageUrl(n.coverImage)} alt={n.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     ) : (
                       <div className="w-full h-full bg-gradient-to-br from-blue-50 to-blue-100" />
                     )}
-                    <div className="absolute top-3 left-3">
-                      <span className="badge-blue capitalize">{n.category}</span>
+                    <div className="absolute top-2 left-2 sm:top-2.5 sm:left-2.5">
+                      <span className="badge-blue text-[10px] sm:text-[11px] capitalize">{n.category}</span>
                     </div>
                   </div>
-                  <div className="p-5">
-                    <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
-                      <div className="flex items-center gap-1">
-                        <FiCalendar size={12} />
-                        {n.publishedAt ? new Date(n.publishedAt).toLocaleDateString(language === 'en' ? 'en-US' : language === 'ru' ? 'ru-RU' : 'uz-UZ') : ''}
+                  <div className="p-3 xs:p-3.5 sm:p-4 md:p-5 flex-1 flex flex-col justify-between min-w-0">
+                    <div>
+                      <div className="flex items-center justify-between text-[11px] sm:text-xs text-slate-400 mb-1.5">
+                        <div className="flex items-center gap-1">
+                          <FiCalendar size={11} />
+                          {n.publishedAt ? new Date(n.publishedAt).toLocaleDateString(language === 'en' ? 'en-US' : language === 'ru' ? 'ru-RU' : 'uz-UZ') : ''}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <FiEye size={11} /> {n.views || 0}
+                        </div>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <FiEye size={12} /> {n.views || 0}
-                      </div>
+                      <h3 className="font-bold text-slate-900 text-xs sm:text-sm md:text-base leading-snug line-clamp-2 group-hover:text-blue-600 transition-colors">{n.title}</h3>
+                      {n.shortDescription && <p className="hidden sm:block text-xs sm:text-sm text-slate-500 mt-1.5 line-clamp-2">{n.shortDescription}</p>}
                     </div>
-                    <h3 className="font-bold text-slate-900 leading-snug line-clamp-2 group-hover:text-blue-600 transition-colors">{n.title}</h3>
-                    {n.shortDescription && <p className="text-sm text-slate-500 mt-2 line-clamp-2">{n.shortDescription}</p>}
-                    <Link to={`/news/${n.slug || n._id || n.id}`} className="mt-4 flex items-center gap-1 text-sm text-blue-600 font-medium hover:gap-2 transition-all">
+                    <Link to={`/news/${n.slug || n._id || n.id}`} className="mt-2.5 pt-2 border-t border-slate-100 flex items-center gap-1 text-xs sm:text-sm text-blue-600 font-medium hover:gap-2 transition-all">
                       {t('home.read', "O'qish")} <FiChevronRight size={14} />
                     </Link>
                   </div>

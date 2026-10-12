@@ -1214,9 +1214,24 @@ const updateBranch = async (id, data) => {
   const idx = fileDb.branches.findIndex((x) => x.id === id || x._id === id);
   if (idx === -1) return null;
 
+  const updateData = { ...data };
+  if (updateData.latitude !== undefined && updateData.latitude !== null && updateData.latitude !== '') {
+    updateData.latitude = parseFloat(updateData.latitude);
+  }
+  if (updateData.longitude !== undefined && updateData.longitude !== null && updateData.longitude !== '') {
+    updateData.longitude = parseFloat(updateData.longitude);
+  }
+  if (updateData.mapCoordinates && (!updateData.latitude || !updateData.longitude)) {
+    const parts = String(updateData.mapCoordinates).split(',').map((s) => s.trim());
+    if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+      updateData.latitude = parseFloat(parts[0]);
+      updateData.longitude = parseFloat(parts[1]);
+    }
+  }
+
   fileDb.branches[idx] = {
     ...fileDb.branches[idx],
-    ...data,
+    ...updateData,
     updatedAt: now.toISOString(),
   };
 

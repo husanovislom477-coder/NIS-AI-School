@@ -6,6 +6,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { FiMapPin, FiPhone, FiMail, FiClock, FiArrowLeft, FiUsers, FiCalendar } from 'react-icons/fi';
 import SectionVideoBackground from '../components/home/SectionVideoBackground';
 import SectionAnimatedBackground from '../components/home/SectionAnimatedBackground';
+import BranchLocationMap from '../components/branch/BranchLocationMap';
 import { getImageUrl } from '../utils/image';
 
 export default function BranchDetailPage() {
@@ -164,6 +165,9 @@ export default function BranchDetailPage() {
             </div>
           </div>
         </div>
+
+        {/* ─── DEDICATED LOCATION & INTERACTIVE MAP SECTION ─── */}
+        <BranchLocationMap branch={branch} />
       </div>
     </section>
   </div>

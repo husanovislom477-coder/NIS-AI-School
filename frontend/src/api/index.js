@@ -138,7 +138,7 @@ export const languageAPI = {
 
 // ─── NIS AI AGENT ─────────────────────────────────────────────────────────────
 export const aiAPI = {
-  chat: (data) => api.post('/ai/chat', data),
+  chat: (data) => api.post('/ai/chat', data, { timeout: 35000 }),
 };
 
 

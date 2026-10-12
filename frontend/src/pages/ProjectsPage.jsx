@@ -55,9 +55,9 @@ export default function ProjectsPage() {
         <SectionAnimatedBackground variant="network" />
         <div className="container-custom relative z-10">
           {isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-6">
               {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="card p-6 h-64 animate-pulse bg-white/80" />
+                <div key={i} className="card p-3 sm:p-4 h-36 animate-pulse bg-white/80 flex flex-row md:flex-col gap-3" />
               ))}
             </div>
           ) : projects.length === 0 ? (
@@ -69,7 +69,7 @@ export default function ProjectsPage() {
               <p className="text-sm text-slate-500 mt-1 max-w-sm mx-auto">{t('projects.noProjectsDesc', "Yangi o'quvchi loyihalari tez orada qo'shiladi.")}</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-6">
               {projects.map((p, idx) => {
                 const img = p.image || p.projectImage;
                 const tags = Array.isArray(p.tags) ? p.tags : (p.category ? [p.category] : ['AI']);
@@ -81,36 +81,41 @@ export default function ProjectsPage() {
                     viewport={{ once: true }}
                     transition={{ delay: idx * 0.1 }}
                   >
-                    <Card variant="bordered" padding="lg" hover className="flex flex-col justify-between h-full bg-white/90 backdrop-blur-xs">
-                      <div>
-                        {img && (
-                          <div className="h-44 -mx-6 -mt-6 mb-4 overflow-hidden rounded-t-xl bg-slate-100">
-                            <img src={getImageUrl(img)} alt={p.title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                    <div className="card overflow-hidden group hover-lift flex flex-row md:flex-col justify-between h-full bg-white/95 backdrop-blur-xs transition-all duration-300">
+                      {img && (
+                        <div className="w-28 xs:w-36 sm:w-44 md:w-full shrink-0 min-h-[120px] md:h-44 overflow-hidden bg-slate-100 relative">
+                          <img src={getImageUrl(img)} alt={p.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                          <div className="absolute top-2 left-2 md:hidden">
+                            <span className="badge-blue text-[10px]">{p.category || 'AI'}</span>
                           </div>
-                        )}
-                        <div className="flex items-center justify-between gap-2 mb-3">
-                          <Badge variant="blue" size="sm">{p.category || 'AI'}</Badge>
-                          {p.year && <span className="text-xs text-slate-400 font-medium">{p.year}</span>}
                         </div>
-                        <h3 className="text-lg font-bold font-display text-slate-900 mb-2 leading-snug">
-                          {p.title}
-                        </h3>
-                        <p className="text-sm text-slate-600 mb-4 line-clamp-3 leading-relaxed">
-                          {p.description}
-                        </p>
-                        <div className="flex flex-wrap gap-1.5 mb-6">
-                          {tags.map((tag) => (
-                            <span key={tag} className="text-[11px] px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-medium">
-                              {tag}
-                            </span>
-                          ))}
+                      )}
+                      <div className="p-3 xs:p-3.5 sm:p-4 md:p-5 flex-1 flex flex-col justify-between min-w-0">
+                        <div>
+                          <div className="hidden md:flex items-center justify-between gap-2 mb-2">
+                            <Badge variant="blue" size="sm">{p.category || 'AI'}</Badge>
+                            {p.year && <span className="text-xs text-slate-400 font-medium">{p.year}</span>}
+                          </div>
+                          <h3 className="text-xs sm:text-sm md:text-base font-bold font-display text-slate-900 mb-1 leading-snug line-clamp-2">
+                            {p.title}
+                          </h3>
+                          <p className="hidden sm:block text-xs sm:text-sm text-slate-600 mb-2 line-clamp-2 leading-relaxed">
+                            {p.description}
+                          </p>
+                          <div className="flex flex-wrap gap-1 mb-2 sm:mb-4">
+                            {tags.slice(0, 3).map((tag) => (
+                              <span key={tag} className="text-[10px] sm:text-[11px] px-1.5 sm:px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-medium">
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                        <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] sm:text-xs text-slate-500">
+                          <span className="font-semibold text-slate-700 truncate mr-2">{p.studentName || p.creator || ''}</span>
+                          <span className="text-school-600 font-medium shrink-0">{p.branch?.name || p.branchName || ''}</span>
                         </div>
                       </div>
-                      <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-                        <span className="font-semibold text-slate-700">{p.studentName || p.creator || ''}</span>
-                        <span className="text-school-600 font-medium">{p.branch?.name || p.branchName || ''}</span>
-                      </div>
-                    </Card>
+                    </div>
                   </motion.div>
                 );
               })}

@@ -9,6 +9,7 @@ import {
 } from 'react-icons/fi';
 import AdminDataTable from '../../components/admin/AdminDataTable';
 import MultilingualTranslationTabs from '../../components/admin/MultilingualTranslationTabs';
+import BranchLocationPickerMap from '../../components/admin/BranchLocationPickerMap';
 import { branchAPI } from '../../api';
 import { getImageUrl } from '../../utils/image';
 import { useLanguage } from '../../context/LanguageContext';
@@ -340,6 +341,9 @@ function BranchEditorModal({ item, onClose, onSave, loading }) {
   const isEditing = Boolean(item && (item._id || item.id));
   const [tab, setTab] = useState('overview');
 
+  const initialLat = item?.latitude ? parseFloat(item.latitude) : 41.3385;
+  const initialLng = item?.longitude ? parseFloat(item.longitude) : 69.3345;
+
   const [form, setForm] = useState({
     name: item?.name || '',
     shortName: item?.shortName || '',
@@ -351,8 +355,11 @@ function BranchEditorModal({ item, onClose, onSave, loading }) {
     description: item?.description || '',
     studentCount: item?.studentCount || 360,
     teacherCount: item?.teacherCount || 18,
-    mapCoordinates: item?.mapCoordinates || '41.311081, 69.240562',
+    latitude: initialLat,
+    longitude: initialLng,
+    mapCoordinates: `${initialLat}, ${initialLng}`,
     directionsUrl: item?.directionsUrl || '',
+    isLocationVerified: item?.isLocationVerified !== undefined ? Boolean(item.isLocationVerified) : true,
     status: item?.status || 'published',
     featured: item?.featured || false,
     slug: item?.slug || '',
@@ -540,14 +547,14 @@ function BranchEditorModal({ item, onClose, onSave, loading }) {
           {tab === 'location' && (
             <div className="space-y-4">
               <div>
-                <label className="label text-xs">To‘liq Manzil *</label>
+                <label className="label text-xs font-semibold">To‘liq Manzil *</label>
                 <input
                   type="text"
                   required
                   value={form.address}
                   onChange={(e) => setForm({ ...form, address: e.target.value })}
                   className="input text-xs"
-                  placeholder="Yunusobod tumani, Amir Temur shoh ko‘chasi, 108"
+                  placeholder="Toshkent sh., Mirzo Ulug'bek tumani, Universitet ko'chasi 7-uy"
                 />
               </div>
 
@@ -580,19 +587,60 @@ function BranchEditorModal({ item, onClose, onSave, loading }) {
                   />
                 </div>
                 <div>
-                  <label className="label text-xs">Xarita Koordinatalari</label>
+                  <label className="label text-xs">Geolokatsiya Holati</label>
+                  <label className="flex items-center gap-2 p-2 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer mt-1">
+                    <input
+                      type="checkbox"
+                      checked={form.isLocationVerified}
+                      onChange={(e) => setForm({ ...form, isLocationVerified: e.target.checked })}
+                      className="rounded text-blue-600 focus:ring-blue-500 w-4 h-4 cursor-pointer"
+                    />
+                    <span className="text-xs font-medium text-slate-700">Xaritadagi joylashuv tasdiqlangan</span>
+                  </label>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="label text-xs">Enlik (Latitude)</label>
                   <input
-                    type="text"
-                    value={form.mapCoordinates}
-                    onChange={(e) => setForm({ ...form, mapCoordinates: e.target.value })}
-                    className="input text-xs"
-                    placeholder="41.311081, 69.240562"
+                    type="number"
+                    step="0.000001"
+                    value={form.latitude}
+                    onChange={(e) => {
+                      const val = parseFloat(e.target.value) || 0;
+                      setForm({
+                        ...form,
+                        latitude: val,
+                        mapCoordinates: `${val}, ${form.longitude}`,
+                      });
+                    }}
+                    className="input text-xs font-mono"
+                    placeholder="41.3385"
+                  />
+                </div>
+                <div>
+                  <label className="label text-xs">Bo‘ylik (Longitude)</label>
+                  <input
+                    type="number"
+                    step="0.000001"
+                    value={form.longitude}
+                    onChange={(e) => {
+                      const val = parseFloat(e.target.value) || 0;
+                      setForm({
+                        ...form,
+                        longitude: val,
+                        mapCoordinates: `${form.latitude}, ${val}`,
+                      });
+                    }}
+                    className="input text-xs font-mono"
+                    placeholder="69.3345"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="label text-xs">Google Maps / Yandex Havolasi</label>
+                <label className="label text-xs">Google Maps / Yandex Marshrut Havolasi (Ixtiyoriy)</label>
                 <input
                   type="url"
                   value={form.directionsUrl}
@@ -601,6 +649,20 @@ function BranchEditorModal({ item, onClose, onSave, loading }) {
                   placeholder="https://maps.google.com/?q=..."
                 />
               </div>
+
+              {/* Interactive Point Picker Map */}
+              <BranchLocationPickerMap
+                latitude={form.latitude}
+                longitude={form.longitude}
+                onChange={({ latitude, longitude }) => {
+                  setForm((prev) => ({
+                    ...prev,
+                    latitude,
+                    longitude,
+                    mapCoordinates: `${latitude}, ${longitude}`,
+                  }));
+                }}
+              />
             </div>
           )}
 

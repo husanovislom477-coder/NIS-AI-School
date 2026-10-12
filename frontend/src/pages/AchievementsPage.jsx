@@ -127,9 +127,9 @@ export default function AchievementsPage() {
           </motion.div>
 
           {isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-5">
               {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="card p-6 h-64 animate-pulse bg-slate-50" />
+                <div key={i} className="card p-4 h-32 animate-pulse bg-slate-50 flex gap-3" />
               ))}
             </div>
           ) : achievements.length === 0 ? (
@@ -141,55 +141,57 @@ export default function AchievementsPage() {
               <p className="text-sm text-slate-500 mt-1 max-w-sm mx-auto">{t('achievements.noResultsDesc', "O'quvchilar yutuqlari va sertifikatlari bu yerda aks etadi.")}</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-5">
               {achievements.map((item, idx) => {
                 const col = medalColors[item.color] || medalColors.blue;
+                const pillarBg = item.color === 'yellow'
+                  ? 'bg-yellow-50 text-yellow-600 border-yellow-100'
+                  : item.color === 'amber'
+                  ? 'bg-amber-50 text-amber-600 border-amber-100'
+                  : 'bg-blue-50 text-blue-600 border-blue-100';
+
                 return (
                   <motion.div
                     key={item.id || idx}
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ delay: idx * 0.12, duration: 0.5 }}
-                    className="card hover-lift flex flex-col overflow-hidden"
+                    transition={{ delay: idx * 0.08, duration: 0.45 }}
+                    className="card hover-lift flex flex-row overflow-hidden transition-all duration-300 h-full border border-slate-200/80"
                   >
-                    {/* Accent bar */}
-                    <div className={`h-1 ${col.accent}`} />
+                    {/* Left Icon Pillar */}
+                    <div className={`w-14 xs:w-16 sm:w-20 shrink-0 flex flex-col items-center justify-center p-2.5 sm:p-3 border-r ${pillarBg}`}>
+                      <FiAward size={22} className="shrink-0" />
+                      <span className="text-[10px] font-bold mt-1 text-center truncate max-w-[55px] opacity-80">{item.year}</span>
+                    </div>
 
-                    <div className="p-6 flex-1 flex flex-col">
-                      {/* Level & Year */}
-                      <div className="flex items-center justify-between gap-2 mb-4">
-                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${col.badge}`}>
-                          <FiGlobe size={11} /> {item.level}
-                        </span>
-                        <div className="flex items-center gap-3 text-xs text-slate-400">
-                          <span className="flex items-center gap-1">
-                            <FiMapPin size={11} /> {item.location}
+                    {/* Right Details */}
+                    <div className="p-3 xs:p-3.5 sm:p-4 flex-1 flex flex-col justify-between min-w-0">
+                      <div>
+                        {/* Level & Location */}
+                        <div className="flex items-center justify-between gap-1.5 mb-1.5 flex-wrap">
+                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-semibold ${col.badge}`}>
+                            <FiGlobe size={10} /> {item.level}
                           </span>
-                          <span className="flex items-center gap-1">
-                            <FiCalendar size={11} /> {item.year}
+                          <span className="text-[10px] sm:text-xs text-slate-400 flex items-center gap-1 truncate max-w-[120px]">
+                            <FiMapPin size={10} /> {item.location}
                           </span>
                         </div>
-                      </div>
 
-                      {/* Title */}
-                      <h3 className="text-lg font-bold font-display text-slate-900 mb-3 leading-snug flex-1">
-                        {item.title}
-                      </h3>
+                        {/* Title */}
+                        <h3 className="text-xs sm:text-sm font-bold font-display text-slate-900 mb-1.5 leading-snug line-clamp-2">
+                          {item.title}
+                        </h3>
 
-                      {/* Result highlight */}
-                      <div className={`px-4 py-3 rounded-xl border ${col.result} mb-4`}>
-                        <div className="flex items-center gap-2">
-                          <FiAward size={16} className={col.icon} />
-                          <div>
-                            <p className="text-sm font-bold">{item.result}</p>
-                            <p className="text-xs font-medium opacity-75 mt-0.5">{item.winner}</p>
-                          </div>
+                        {/* Result highlight */}
+                        <div className={`px-2.5 py-1.5 rounded-lg border ${col.result} mb-1.5`}>
+                          <p className="text-xs font-bold leading-tight">{item.result}</p>
+                          <p className="text-[10px] sm:text-[11px] font-medium opacity-80 mt-0.5 truncate">{item.winner}</p>
                         </div>
                       </div>
 
                       {/* Description */}
-                      <p className="text-sm text-slate-600 leading-relaxed">{item.desc}</p>
+                      <p className="hidden sm:block text-[11px] sm:text-xs text-slate-500 line-clamp-2 leading-relaxed">{item.desc}</p>
                     </div>
                   </motion.div>
                 );

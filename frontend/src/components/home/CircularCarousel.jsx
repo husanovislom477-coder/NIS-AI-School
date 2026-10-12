@@ -27,13 +27,13 @@ export default function CircularCarousel({
   const { t } = useLanguage();
   const containerRef = useRef(null);
 
-  // Responsive dimensions - wider horizontal span, preserved compact height
+  // Responsive dimensions - wider horizontal span, ample vertical clearance to prevent overlap
   const [dimensions, setDimensions] = useState(() => {
-    if (typeof window === 'undefined') return { cardWidth: 190, cardHeight: 250, radius: 360, stageExtra: 40 };
+    if (typeof window === 'undefined') return { cardWidth: 190, cardHeight: 250, radius: 360, stageExtra: 95 };
     const w = window.innerWidth;
-    if (w < 640) return { cardWidth: 135, cardHeight: 180, radius: 225, stageExtra: 30 };
-    if (w < 1024) return { cardWidth: 160, cardHeight: 215, radius: 290, stageExtra: 35 };
-    return { cardWidth: 190, cardHeight: 250, radius: 360, stageExtra: 40 };
+    if (w < 640) return { cardWidth: 135, cardHeight: 180, radius: 225, stageExtra: 70 };
+    if (w < 1024) return { cardWidth: 160, cardHeight: 215, radius: 290, stageExtra: 85 };
+    return { cardWidth: 190, cardHeight: 250, radius: 360, stageExtra: 95 };
   });
 
   const count = items.length;
@@ -82,11 +82,11 @@ export default function CircularCarousel({
     const handleResize = () => {
       const w = window.innerWidth;
       if (w < 640) {
-        setDimensions({ cardWidth: 135, cardHeight: 180, radius: 225, stageExtra: 30 });
+        setDimensions({ cardWidth: 135, cardHeight: 180, radius: 225, stageExtra: 70 });
       } else if (w < 1024) {
-        setDimensions({ cardWidth: 160, cardHeight: 215, radius: 290, stageExtra: 35 });
+        setDimensions({ cardWidth: 160, cardHeight: 215, radius: 290, stageExtra: 85 });
       } else {
-        setDimensions({ cardWidth: 190, cardHeight: 250, radius: 360, stageExtra: 40 });
+        setDimensions({ cardWidth: 190, cardHeight: 250, radius: 360, stageExtra: 95 });
       }
     };
     window.addEventListener('resize', handleResize);
@@ -262,8 +262,8 @@ export default function CircularCarousel({
 
       <div className="container-custom relative z-10">
 
-        {/* ── Section Header (Compact & Crisp) ── */}
-        <div className="text-center max-w-2xl mx-auto mb-6 sm:mb-8">
+        {/* ── Section Header (Generous Headroom & Preserved Stacking) ── */}
+        <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-14 lg:mb-16 relative z-20 pointer-events-auto">
           <span className="badge-blue mb-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] sm:text-xs font-semibold">
             <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse" />
             {t('home.carouselBadge', 'Maktab Hayoti & Muhit')}
@@ -279,12 +279,12 @@ export default function CircularCarousel({
           </p>
         </div>
 
-        {/* ── 3D Circular Carousel Stage (Wider Horizontal Span, Preserved Height, 5px Separation) ── */}
+        {/* ── 3D Circular Carousel Stage (Ample Vertical Space, No Overlap) ── */}
         <div
           ref={containerRef}
-          className="relative w-full max-w-6xl mx-auto flex items-center justify-center cursor-grab active:cursor-grabbing touch-pan-y"
+          className="relative z-10 w-full max-w-6xl mx-auto flex items-center justify-center cursor-grab active:cursor-grabbing touch-pan-y pt-4 pb-2"
           style={{
-            marginTop: '5px',
+            marginTop: 'clamp(1rem, 3vw, 2.5rem)',
             height: dimensions.cardHeight + dimensions.stageExtra,
             perspective: `${perspective}px`,
             perspectiveOrigin: '50% 50%',

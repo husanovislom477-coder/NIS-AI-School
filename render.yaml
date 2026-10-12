@@ -6,7 +6,7 @@ services:
     plan: free
     region: frankfurt
     rootDir: backend
-    buildCommand: npm install && npx prisma generate
+    buildCommand: npm install --legacy-peer-deps && npx prisma generate
     startCommand: node src/server.js
     healthCheckPath: /api/health
     autoDeploy: true
@@ -30,7 +30,7 @@ services:
       - key: GEMINI_API_KEY
         sync: false
       - key: GEMINI_MODEL
-        value: gemini-3.8-flash
+        value: gemini-3.5-flash
       - key: FRONTEND_URL
         value: https://nis-ai-school.vercel.app,http://localhost:5173
 

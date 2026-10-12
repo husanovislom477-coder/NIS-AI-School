@@ -17,7 +17,7 @@
       "primaryColor": "#0066cc",
       "secondaryColor": "#00a3ff",
       "createdAt": "2026-10-06T04:52:48.062Z",
-      "updatedAt": "2026-10-10T05:10:00.079Z",
+      "updatedAt": "2026-10-10T10:38:53.272Z",
       "lastLoginAt": "2026-10-10T05:10:00.079Z",
       "languageCode": "uz"
     },
@@ -143,11 +143,11 @@
       "nativeName": "한국어",
       "flag": "🇰🇷",
       "direction": "ltr",
-      "isEnabled": true,
+      "isEnabled": false,
       "isDefault": false,
       "order": 8,
       "createdAt": "2026-10-06T08:56:26.946Z",
-      "updatedAt": "2026-10-06T08:56:26.946Z"
+      "updatedAt": "2026-10-10T09:49:33.622Z"
     },
     {
       "id": "lang_zh",
@@ -160,7 +160,7 @@
       "isDefault": false,
       "order": 9,
       "createdAt": "2026-10-06T08:56:26.946Z",
-      "updatedAt": "2026-10-10T03:47:32.076Z"
+      "updatedAt": "2026-10-10T09:49:31.427Z"
     },
     {
       "id": "lang_ja",
@@ -169,17 +169,17 @@
       "nativeName": "日本語",
       "flag": "🇯🇵",
       "direction": "ltr",
-      "isEnabled": true,
+      "isEnabled": false,
       "isDefault": false,
       "order": 10,
       "createdAt": "2026-10-06T08:56:26.946Z",
-      "updatedAt": "2026-10-06T08:56:26.946Z"
+      "updatedAt": "2026-10-10T09:49:39.123Z"
     }
   ],
   "branches": [
     {
       "id": "br_tashkent_01",
-      "name": "Namangan shahar Bosh Kampus",
+      "name": "Toshkent Bosh Kampus",
       "description": "Sun'iy intellekt va robototexnika bo'yicha mintaqadagi eng yirik zamonaviy kampus. 1500+ o'quvchi uchun ilmiy laboratoriyalar va sport majmualari.",
       "address": "Toshkent sh., Mirzo Ulug'bek tumani, Universitet ko'chasi 7-uy",
       "phone": "+998 71 200 01 01",
@@ -191,23 +191,23 @@
       "workingHours": "08:00 - 18:30",
       "createdAt": "2026-10-06T04:52:48.065Z",
       "updatedAt": "2026-10-10T04:31:02.380Z",
-      "shortName": "Namangan shahar",
+      "shortName": "Toshkent",
       "location": "Toshkent sh., Mirzo Ulug'bek tumani, Universitet ko'chasi 7-uy",
-      "email": "",
-      "established": "2007",
-      "studentCount": "0",
-      "teacherCount": "0",
-      "featured": "false",
+      "email": "tashkent@nis-ai.edu.uz",
+      "established": "2024",
+      "studentCount": "520",
+      "teacherCount": "18",
+      "featured": "true",
       "isActive": "true",
       "translations": {
         "uz": {
-          "name": "Namangan shahar Bosh Kampus",
+          "name": "Toshkent Bosh Kampus",
           "description": "Sun'iy intellekt va robototexnika bo'yicha mintaqadagi eng yirik zamonaviy kampus. 1500+ o'quvchi uchun ilmiy laboratoriyalar va sport majmualari.",
           "address": "Toshkent sh., Mirzo Ulug'bek tumani, Universitet ko'chasi 7-uy",
           "workingHours": "08:00 - 18:30"
         },
         "en": {
-          "name": "Namangan shahar Main Campus",
+          "name": "Tashkent Main Campus",
           "description": "The premier modern artificial intelligence and robotics campus in Central Asia. Advanced research laboratories and sports facilities for 1,500+ students.",
           "address": "7 University Street, Mirzo Ulugbek District, Tashkent",
           "workingHours": "08:00 - 18:30"
@@ -256,7 +256,7 @@
       "id": "bt_tash_uz",
       "branchId": "br_tashkent_01",
       "languageCode": "uz",
-      "name": "Namangan shahar Bosh Kampus",
+      "name": "Toshkent Bosh Kampus",
       "description": "Sun'iy intellekt va robototexnika bo'yicha mintaqadagi eng yirik zamonaviy kampus. 1500+ o'quvchi uchun ilmiy laboratoriyalar va sport majmualari.",
       "address": "Toshkent sh., Mirzo Ulug'bek tumani, Universitet ko'chasi 7-uy",
       "workingHours": "08:00 - 18:30",
@@ -266,7 +266,7 @@
       "id": "bt_tash_en",
       "branchId": "br_tashkent_01",
       "languageCode": "en",
-      "name": "Namangan shahar Main Campus",
+      "name": "Tashkent Main Campus",
       "description": "The premier modern artificial intelligence and robotics campus in Central Asia. Advanced research laboratories and sports facilities for 1,500+ students.",
       "address": "7 University Street, Mirzo Ulugbek District, Tashkent",
       "workingHours": "08:00 - 18:30",
@@ -909,6 +909,16 @@
     }
   ],
   "activities": [
+    {
+      "id": "act_1791628733276_n4p2f",
+      "userId": "usr_admin_01",
+      "userName": "Admin NIS",
+      "action": "UPDATE_USER",
+      "entity": "User",
+      "details": "Updated user: admin@nis-ai.edu.uz (Role: ADMIN, Active: true)",
+      "ip": "",
+      "createdAt": "2026-10-10T10:38:53.276Z"
+    },
     {
       "id": "act_1791607424389_c9d3w",
       "userId": "usr_admin_01",

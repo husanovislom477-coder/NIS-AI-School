@@ -101,28 +101,30 @@ export default function TeachersPage() {
         </p>
 
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-4 lg:gap-5">
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="card p-4 animate-pulse">
-                <div className="h-52 bg-slate-200 rounded-xl mb-4" />
-                <div className="h-4 bg-slate-200 rounded w-3/4 mb-2" />
-                <div className="h-3 bg-slate-100 rounded w-1/2 mb-2" />
-                <div className="h-3 bg-slate-100 rounded w-1/3" />
+              <div key={i} className="card p-3 sm:p-4 animate-pulse flex flex-row lg:flex-col gap-3">
+                <div className="w-28 xs:w-32 sm:w-40 lg:w-full h-28 xs:h-32 sm:h-36 lg:h-52 bg-slate-200 rounded-xl shrink-0" />
+                <div className="flex-1 flex flex-col justify-center min-w-0">
+                  <div className="h-4 bg-slate-200 rounded w-3/4 mb-2" />
+                  <div className="h-3 bg-slate-100 rounded w-1/2 mb-2" />
+                  <div className="h-3 bg-slate-100 rounded w-1/3" />
+                </div>
               </div>
             ))}
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5 sm:gap-4 lg:gap-5">
               {teachers.map((teacher, i) => (
                 <motion.div
                   key={teacher._id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.04, duration: 0.45 }}
-                  className="card overflow-hidden group hover-lift"
+                  className="card overflow-hidden group hover-lift flex flex-row lg:flex-col transition-all duration-300 h-full"
                 >
-                  <div className="relative h-56 bg-slate-100 overflow-hidden">
+                  <div className="relative w-28 xs:w-32 sm:w-40 lg:w-full shrink-0 min-h-[130px] lg:h-52 bg-slate-100 overflow-hidden">
                     <img
                       src={getImageUrl(teacher.photo) || `https://ui-avatars.com/api/?name=${teacher.firstName}+${teacher.lastName}&background=0066cc&color=fff&size=240`}
                       alt={`${teacher.firstName} ${teacher.lastName}`}
@@ -130,20 +132,33 @@ export default function TeachersPage() {
                       onError={(e) => { e.target.src = `https://ui-avatars.com/api/?name=${teacher.firstName}+${teacher.lastName}&background=0066cc&color=fff&size=240`; }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400" />
-                    <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-400">
-                      <Link to={`/teachers/${teacher._id}`} className="text-xs text-white font-semibold flex items-center gap-1">
-                        {t('teachers.viewDetails', "Batafsil ko'rish")} <FiChevronRight size={12} />
-                      </Link>
-                    </div>
+                    {teacher.branch && (
+                      <div className="absolute top-2 right-2 sm:top-2.5 sm:right-2.5">
+                        <span className="badge-blue text-[10px] sm:text-[11px] backdrop-blur-sm bg-white/90">
+                          {teacher.branch}
+                        </span>
+                      </div>
+                    )}
                   </div>
-                  <div className="p-5">
-                    <h3 className="font-bold text-slate-900 font-display">{teacher.firstName} {teacher.lastName}</h3>
-                    <p className="text-sm text-blue-600 font-medium mt-1">{teacher.subject}</p>
-                    <div className="flex items-center gap-2 mt-3 flex-wrap">
-                      {teacher.education && <span className="badge-blue text-[11px]">{teacher.education}</span>}
-                      {teacher.experience > 0 && <span className="text-xs text-slate-400">{teacher.experience}+ {t('teachers.yearsShort', 'yil')}</span>}
+                  <div className="p-3 xs:p-3.5 sm:p-4 lg:p-5 flex-1 flex flex-col justify-between min-w-0">
+                    <div>
+                      <h3 className="font-bold text-slate-900 font-display text-xs sm:text-sm lg:text-base leading-tight truncate">
+                        {teacher.firstName} {teacher.lastName}
+                      </h3>
+                      <p className="text-xs sm:text-sm text-blue-600 font-medium mt-0.5 truncate">{teacher.subject}</p>
+                      <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+                        {teacher.education && <span className="badge-blue text-[10px] sm:text-[11px]">{teacher.education}</span>}
+                        {teacher.experience > 0 && <span className="text-[11px] sm:text-xs text-slate-400">{teacher.experience}+ {t('teachers.yearsShort', 'yil')}</span>}
+                      </div>
+                      {teacher.university && <p className="text-[11px] sm:text-xs text-slate-400 mt-1 truncate">{teacher.university}</p>}
                     </div>
-                    {teacher.university && <p className="text-xs text-slate-400 mt-1.5 truncate">{teacher.university}</p>}
+                    <Link
+                      to={`/teachers/${teacher._id}`}
+                      className="mt-2.5 pt-2 border-t border-slate-100 flex items-center gap-1 text-[11px] sm:text-xs font-semibold text-school-600 hover:text-school-800 transition-colors"
+                    >
+                      <span>{t('teachers.viewDetails', "Batafsil ko'rish")}</span>
+                      <FiChevronRight size={13} />
+                    </Link>
                   </div>
                 </motion.div>
               ))}

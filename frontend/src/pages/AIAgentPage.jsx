@@ -6,13 +6,6 @@ import {
   FiSend,
   FiRotateCcw,
   FiArrowRight,
-  FiMapPin,
-  FiAward,
-  FiBookOpen,
-  FiCheckCircle,
-  FiHelpCircle,
-  FiMessageSquare,
-  FiZap,
 } from 'react-icons/fi';
 import { useLanguage } from '../context/LanguageContext';
 import { aiAPI } from '../api';
@@ -22,7 +15,7 @@ import MarkdownMessage from '../components/common/MarkdownMessage';
 export default function AIAgentPage() {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
-  const messagesEndRef = useRef(null);
+  const messagesContainerRef = useRef(null);
   const inputRef = useRef(null);
 
   const initialMessage = {
@@ -47,35 +40,13 @@ export default function AIAgentPage() {
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
 
-  const suggestedTopics = [
-    {
-      icon: FiMapPin,
-      title: language === 'uz' ? 'Filiallar tarmog\'i' : language === 'ru' ? 'Кампусы школы' : 'Smart Campuses',
-      desc: language === 'uz' ? 'Toshkent, Samarqand va Buxoro' : language === 'ru' ? 'Ташкент, Самарканд, Бухара' : 'Tashkent, Samarkand, Bukhara',
-      query: language === 'uz' ? 'Maktabning qaysi shaharlarda filiallari bor?' : language === 'ru' ? 'В каких городах расположены кампусы?' : 'Which cities have NIS AI campuses?',
-    },
-    {
-      icon: FiAward,
-      title: language === 'uz' ? '100% Grant & Qabul' : language === 'ru' ? '100% Грант и приём' : '100% Grant & Admissions',
-      desc: language === 'uz' ? '240 ta o\'rin, barcha xarajatlar qoplanadi' : language === 'ru' ? '240 мест, полное покрытие' : '240 merit-based full grants',
-      query: language === 'uz' ? 'Qabul shartlari va 100% grant tartibi qanday?' : language === 'ru' ? 'Каковы условия поступления на грант?' : 'What are the admission requirements and grant terms?',
-    },
-    {
-      icon: FiCpu,
-      title: language === 'uz' ? 'O\'qituvchilar tarkibi' : language === 'ru' ? 'Преподаватели' : 'World-Class Faculty',
-      desc: language === 'uz' ? 'MIT, Stanford, ETH Zürich' : language === 'ru' ? 'Выпускники ведущих вузов' : 'Alumni from top institutions',
-      query: language === 'uz' ? 'Ustozlar kimlar va ularning tajribasi qanday?' : language === 'ru' ? 'Кто преподает в школе?' : 'Who are the teachers at NIS AI School?',
-    },
-    {
-      icon: FiZap,
-      title: language === 'uz' ? 'AI Loyihalar' : language === 'ru' ? 'Проекты учеников' : 'Student AI Projects',
-      desc: language === 'uz' ? 'Dronlar, kompyuter ko\'rishi, tibbiy AI' : language === 'ru' ? 'Дроны, зрение, медицина' : 'Robotics, Computer Vision, MedAI',
-      query: language === 'uz' ? 'O\'quvchilar qanday AI loyihalar yaratgan?' : language === 'ru' ? 'Какие проекты создали ученики?' : 'What AI projects have students built?',
-    },
-  ];
-
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTo({
+        top: messagesContainerRef.current.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
   }, [messages, isTyping]);
 
   const handleSend = async (textToSend = inputValue) => {
@@ -183,31 +154,6 @@ export default function AIAgentPage() {
           </p>
         </div>
 
-        {/* Suggested Topics Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-          {suggestedTopics.map((topic, i) => {
-            const Icon = topic.icon;
-            return (
-              <button
-                key={i}
-                type="button"
-                onClick={() => handleSend(topic.query)}
-                className="p-3.5 bg-white rounded-2xl border border-slate-200/80 hover:border-school-300 hover:shadow-card transition-all text-left group cursor-pointer"
-              >
-                <div className="w-8 h-8 rounded-xl bg-school-50 text-school-600 flex items-center justify-center mb-2 group-hover:bg-school-600 group-hover:text-white transition-colors">
-                  <Icon size={16} />
-                </div>
-                <h3 className="font-bold font-display text-xs text-slate-900 group-hover:text-school-600 transition-colors">
-                  {topic.title}
-                </h3>
-                <p className="text-[11px] text-slate-400 mt-0.5 line-clamp-1">
-                  {topic.desc}
-                </p>
-              </button>
-            );
-          })}
-        </div>
-
         {/* Chat Main Window */}
         <div className="bg-white rounded-3xl border border-slate-200/90 shadow-elevation-2 overflow-hidden flex flex-col h-[650px] max-h-[75vh]">
           
@@ -242,7 +188,10 @@ export default function AIAgentPage() {
           </div>
 
           {/* Messages Area */}
-          <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-gradient-to-b from-white to-slate-50/40">
+          <div
+            ref={messagesContainerRef}
+            className="flex-1 overflow-y-auto p-5 space-y-4 bg-gradient-to-b from-white to-slate-50/40"
+          >
             {messages.map((m) => {
               const isAgent = m.sender === 'agent';
               return (
@@ -291,13 +240,13 @@ export default function AIAgentPage() {
                 <span className="w-1.5 h-1.5 rounded-full bg-school-500 animate-bounce [animation-delay:0.3s]" />
               </div>
             )}
-            <div ref={messagesEndRef} />
           </div>
 
           {/* Input Footer */}
           <form
             onSubmit={(e) => {
               e.preventDefault();
+              e.stopPropagation();
               handleSend();
             }}
             className="p-3.5 bg-white border-t border-slate-100 flex items-center gap-2"
@@ -307,6 +256,13 @@ export default function AIAgentPage() {
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleSend();
+                }
+              }}
               disabled={isTyping}
               placeholder={
                 isTyping

@@ -17,14 +17,14 @@ export default function HeroBackground() {
   const videoUrl = useMemo(
     () =>
       import.meta.env.VITE_HERO_VIDEO_URL ||
-      'https://assets.mixkit.co/videos/preview/mixkit-software-developer-working-on-code-screen-close-up-1728-large.mp4',
+      '/videos/campus-loop.mp4',
     []
   );
 
   const posterUrl = useMemo(
     () =>
       import.meta.env.VITE_HERO_POSTER_URL ||
-      'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=1600&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1600&auto=format&fit=crop&q=80',
     []
   );
 

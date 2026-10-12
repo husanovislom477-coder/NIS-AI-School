@@ -56,27 +56,27 @@ export function Navbar() {
           : 'bg-white/90 backdrop-blur-md border border-slate-200/70 py-3.5 shadow-elevation-1'
       }`}
     >
-      <div className="w-full px-3.5 sm:px-5 lg:px-7">
-        <div className="flex items-center justify-between gap-4">
+      <div className="w-full px-2.5 xs:px-3.5 sm:px-5 lg:px-7">
+        <div className="flex items-center justify-between gap-2 sm:gap-4">
           {/* Logo & Brand Identity */}
           <Link
             to="/"
-            className="flex items-center gap-3 shrink-0 group focus:outline-none focus-visible:ring-2 focus-visible:ring-school-500 rounded-xl"
+            className="flex items-center gap-2 sm:gap-3 shrink-0 group focus:outline-none focus-visible:ring-2 focus-visible:ring-school-500 rounded-xl"
             aria-label="NIS AI School Bosh sahifa"
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-school-600 to-school-800 flex items-center justify-center shadow-elevation-1 group-hover:shadow-glow group-hover:scale-105 transition-all duration-200">
-              <span className="text-white font-black font-display text-sm tracking-wider">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-school-600 to-school-800 flex items-center justify-center shadow-elevation-1 group-hover:shadow-glow group-hover:scale-105 transition-all duration-200">
+              <span className="text-white font-black font-display text-xs sm:text-sm tracking-wider">
                 NIS
               </span>
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="font-extrabold font-display text-slate-900 text-base leading-tight tracking-tight">
+                <span className="font-extrabold font-display text-slate-900 text-sm sm:text-base leading-tight tracking-tight">
                   NIS AI School
                 </span>
                 <span className="inline-block w-1.5 h-1.5 rounded-full bg-school-600" />
               </div>
-              <p className="text-[11px] text-slate-500 font-medium leading-none tracking-normal">
+              <p className="text-[10px] sm:text-[11px] text-slate-500 font-medium leading-none tracking-normal hidden sm:block">
                 Digital Profile Platform
               </p>
             </div>

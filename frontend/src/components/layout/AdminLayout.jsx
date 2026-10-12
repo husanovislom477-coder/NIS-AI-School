@@ -12,6 +12,7 @@ import {
 
 export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const { user, logout } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
@@ -40,12 +41,21 @@ export default function AdminLayout() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex">
+      {/* Mobile Backdrop Overlay */}
+      {mobileDrawerOpen && (
+        <div
+          onClick={() => setMobileDrawerOpen(false)}
+          className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-40 lg:hidden"
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className={`fixed top-0 left-0 h-full bg-slate-900 text-white z-40 transition-all duration-300 flex flex-col
-        ${sidebarOpen ? 'w-64' : 'w-16'}`}>
+      <aside className={`fixed top-0 left-0 h-full bg-slate-900 text-white z-50 transition-all duration-300 flex flex-col
+        ${sidebarOpen ? 'w-64' : 'w-16'}
+        ${mobileDrawerOpen ? 'translate-x-0 !w-64' : '-translate-x-full lg:translate-x-0'}`}>
         {/* Sidebar Header */}
         <div className="flex items-center justify-between px-4 h-16 border-b border-slate-800">
-          {sidebarOpen && (
+          {(sidebarOpen || mobileDrawerOpen) && (
             <div className="flex items-center gap-2.5 min-w-0">
               <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center flex-shrink-0 shadow-sm">
                 <span className="text-white font-bold text-xs tracking-wider">NIS</span>
@@ -56,12 +66,16 @@ export default function AdminLayout() {
               </div>
             </div>
           )}
+          {/* Close mobile drawer or toggle desktop sidebar */}
           <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
+            onClick={() => {
+              if (mobileDrawerOpen) setMobileDrawerOpen(false);
+              else setSidebarOpen(!sidebarOpen);
+            }}
             className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors flex-shrink-0 ml-auto cursor-pointer"
             aria-label="Toggle Sidebar"
           >
-            {sidebarOpen ? <FiChevronLeft size={18} /> : <FiMenu size={18} />}
+            {mobileDrawerOpen ? <FiX size={18} /> : sidebarOpen ? <FiChevronLeft size={18} /> : <FiMenu size={18} />}
           </button>
         </div>
 
@@ -72,23 +86,24 @@ export default function AdminLayout() {
               key={to}
               to={to}
               end={exact}
+              onClick={() => setMobileDrawerOpen(false)}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3.5 py-2.5 mx-2 rounded-xl text-xs font-medium transition-all duration-200
                 ${isActive
                   ? 'bg-blue-600 text-white shadow-glow font-semibold'
                   : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`
               }
-              title={!sidebarOpen ? label : ''}
+              title={!sidebarOpen && !mobileDrawerOpen ? label : ''}
             >
               <Icon size={17} className="flex-shrink-0" />
-              {sidebarOpen && <span className="truncate">{label}</span>}
+              {(sidebarOpen || mobileDrawerOpen) && <span className="truncate">{label}</span>}
             </NavLink>
           ))}
         </nav>
 
         {/* User + Logout */}
         <div className="border-t border-slate-800 p-3 bg-slate-900/80">
-          {sidebarOpen && (
+          {(sidebarOpen || mobileDrawerOpen) && (
             <div className="flex items-center gap-2.5 mb-2.5 px-1">
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-xs font-bold flex-shrink-0 text-white shadow-sm">
                 {user?.firstName?.[0] || 'A'}{user?.lastName?.[0] || 'D'}
@@ -106,7 +121,7 @@ export default function AdminLayout() {
               title="Saytga o'tish"
             >
               <FiExternalLink size={13} />
-              {sidebarOpen && <span>{t('admin.backToSite', 'Saytga o‘tish')}</span>}
+              {(sidebarOpen || mobileDrawerOpen) && <span>{t('admin.backToSite', 'Saytga o‘tish')}</span>}
             </Link>
             <button
               onClick={handleLogout}
@@ -120,20 +135,30 @@ export default function AdminLayout() {
       </aside>
 
       {/* Main Content Area */}
-      <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-16'}`}>
+      <div className={`flex-1 min-w-0 transition-all duration-300 ml-0 ${sidebarOpen ? 'lg:ml-64' : 'lg:ml-16'}`}>
         {/* Top Header Bar */}
-        <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 h-16 flex items-center px-6 shadow-xs">
-          <div className="flex items-center justify-between w-full gap-4">
-            <div className="flex items-center gap-3">
-              <div>
-                <h2 className="font-bold font-display text-slate-900 text-sm leading-tight">
+        <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 h-16 flex items-center px-4 sm:px-6 shadow-xs">
+          <div className="flex items-center justify-between w-full gap-3 sm:gap-4">
+            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+              {/* Mobile drawer hamburger */}
+              <button
+                type="button"
+                onClick={() => setMobileDrawerOpen(true)}
+                className="lg:hidden p-2 rounded-xl text-slate-700 hover:text-blue-600 hover:bg-slate-100 transition-colors shrink-0 cursor-pointer"
+                aria-label="Open Admin Menu"
+              >
+                <FiMenu size={20} />
+              </button>
+
+              <div className="min-w-0">
+                <h2 className="font-bold font-display text-slate-900 text-xs sm:text-sm leading-tight truncate">
                   {adminNav.find((n) => n.to === location.pathname)?.label || 'Boshqaruv Paneli'}
                 </h2>
-                <p className="text-[11px] text-slate-400 font-medium">NIS AI School Enterprise Management System</p>
+                <p className="text-[10px] sm:text-[11px] text-slate-400 font-medium truncate">NIS AI School Enterprise Management</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
               {/* Multilingual Selector */}
               <LanguageSelector variant="compact" />
 
@@ -144,7 +169,7 @@ export default function AdminLayout() {
               </span>
 
               {/* Admin Role Tag */}
-              <span className="badge-blue text-xs font-bold uppercase tracking-wider">
+              <span className="badge-blue text-[10px] sm:text-xs font-bold uppercase tracking-wider">
                 {user?.role?.toUpperCase() || 'ADMIN'}
               </span>
             </div>
@@ -152,7 +177,7 @@ export default function AdminLayout() {
         </header>
 
         {/* Page Content */}
-        <main className="p-6 max-w-7xl mx-auto">
+        <main className="p-3.5 sm:p-6 max-w-7xl mx-auto overflow-x-hidden">
           <Outlet />
         </main>
       </div>

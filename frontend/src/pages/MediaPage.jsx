@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import PageHeroBackground from '../components/common/PageHeroBackground';
 import SectionAnimatedBackground from '../components/home/SectionAnimatedBackground';
 import SectionVideoBackground from '../components/home/SectionVideoBackground';
+import SchoolGallerySwiper from '../components/home/SchoolGallerySwiper';
 
 const demoMedia = [
   {
@@ -68,6 +69,11 @@ export default function MediaPage() {
         </div>
       </div>
 
+      {/* ─── INTERACTIVE SWIPER IMAGE SLIDER (SWIPER STUDIO INSPIRED) ─── */}
+      <div className="bg-white border-b border-slate-100">
+        <SchoolGallerySwiper showHeader={true} />
+      </div>
+
       {/* Media Grid Section — Animated Waves */}
       <section className="py-20 bg-slate-50/50 relative overflow-hidden">
         <SectionAnimatedBackground variant="waves" />
@@ -98,29 +104,29 @@ export default function MediaPage() {
           </div>
 
           {/* Media Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-6">
             {demoMedia.map((m) => (
-              <Card key={m.id} variant="bordered" padding="none" hover className="group bg-white/90 backdrop-blur-xs">
-                <div className="relative aspect-video overflow-hidden bg-slate-100">
+              <div key={m.id} className="card overflow-hidden group hover-lift bg-white/95 backdrop-blur-xs flex flex-row sm:flex-col transition-all duration-300">
+                <div className="relative w-32 xs:w-36 sm:w-full shrink-0 aspect-video overflow-hidden bg-slate-100">
                   <img
                     src={m.image}
                     alt={m.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     loading="lazy"
                   />
-                  <span className="absolute top-3 left-3">
+                  <span className="absolute top-2 left-2 sm:top-3 sm:left-3">
                     <Badge variant="navy" size="sm">
                       {m.category}
                     </Badge>
                   </span>
                 </div>
-                <div className="p-4">
-                  <h4 className="font-semibold text-sm text-slate-900 group-hover:text-school-600 transition-colors">
+                <div className="p-3 sm:p-4 flex-1 flex flex-col justify-between min-w-0">
+                  <h4 className="font-semibold text-xs sm:text-sm text-slate-900 group-hover:text-school-600 transition-colors line-clamp-2 leading-snug">
                     {m.title}
                   </h4>
-                  <p className="text-xs text-slate-500 mt-1">{m.campus}</p>
+                  <p className="text-[11px] sm:text-xs text-slate-400 mt-1 truncate">{m.campus}</p>
                 </div>
-              </Card>
+              </div>
             ))}
           </div>
         </div>

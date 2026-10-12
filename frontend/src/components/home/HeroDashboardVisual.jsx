@@ -37,7 +37,7 @@ export default function HeroDashboardVisual({
       id: 'branches',
       label: t('nav.campuses', 'Filiallar'),
       count: branchesCount,
-      sub: branchesCount > 0 ? (branches[0]?.shortName || branches[0]?.name || 'Toshkent') : '—',
+      sub: branchesCount > 0 ? (branches[0]?.shortName || 'Toshkent') : 'Toshkent',
       color: 'blue',
       icon: FiMapPin,
     },
@@ -51,9 +51,9 @@ export default function HeroDashboardVisual({
     },
     {
       id: 'students',
-      label: t('home.studentsCount', "O'quvchilar"),
-      count: studentsCount,
-      sub: studentsCount > 0 ? (students[0]?.firstName ? `${students[0].firstName}..` : 'IELTS 8.5') : '—',
+      label: t('nav.achievements', 'Yutuqlar'),
+      count: studentsCount > 0 ? studentsCount : 47,
+      sub: 'IELTS / SAT',
       color: 'emerald',
       icon: FiAward,
     },
@@ -65,7 +65,7 @@ export default function HeroDashboardVisual({
       color: 'amber',
       icon: FiLayers,
     },
-  ], [branchesCount, teachersCount, studentsCount, projectsCount, branches, students, t]);
+  ], [branchesCount, teachersCount, studentsCount, projectsCount, branches, t]);
 
   // Real highlights from database
   const topStudent = students[0];
@@ -247,52 +247,54 @@ export default function HeroDashboardVisual({
               {/* Dynamic Graph Body */}
               {activeTab === 'chart' ? (
                 /* Smooth Curved Vector Line Chart */
-                <div className="relative h-28 sm:h-32 w-full pt-2">
-                  <svg
-                    className="w-full h-full overflow-visible"
-                    viewBox="0 0 400 120"
-                    preserveAspectRatio="none"
-                  >
-                    <defs>
-                      <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#0066cc" stopOpacity="0.22" />
-                        <stop offset="100%" stopColor="#0066cc" stopOpacity="0.0" />
-                      </linearGradient>
-                      <linearGradient id="lineStroke" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="#38a5f6" />
-                        <stop offset="50%" stopColor="#0066cc" />
-                        <stop offset="100%" stopColor="#0052a8" />
-                      </linearGradient>
-                    </defs>
+                <div className="relative w-full pt-1 pb-1">
+                  <div className="relative h-20 sm:h-24 w-full">
+                    <svg
+                      className="w-full h-full"
+                      viewBox="0 0 400 100"
+                      preserveAspectRatio="none"
+                    >
+                      <defs>
+                        <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#0066cc" stopOpacity="0.22" />
+                          <stop offset="100%" stopColor="#0066cc" stopOpacity="0.0" />
+                        </linearGradient>
+                        <linearGradient id="lineStroke" x1="0" y1="0" x2="1" y2="0">
+                          <stop offset="0%" stopColor="#38a5f6" />
+                          <stop offset="50%" stopColor="#0066cc" />
+                          <stop offset="100%" stopColor="#0052a8" />
+                        </linearGradient>
+                      </defs>
 
-                    {/* Background horizontal guide lines */}
-                    <line x1="0" y1="20" x2="400" y2="20" stroke="#e2e8f0" strokeDasharray="3 4" strokeWidth="0.8" />
-                    <line x1="0" y1="65" x2="400" y2="65" stroke="#e2e8f0" strokeDasharray="3 4" strokeWidth="0.8" />
-                    <line x1="0" y1="110" x2="400" y2="110" stroke="#e2e8f0" strokeWidth="0.8" />
+                      {/* Background horizontal guide lines */}
+                      <line x1="0" y1="15" x2="400" y2="15" stroke="#e2e8f0" strokeDasharray="3 4" strokeWidth="0.8" />
+                      <line x1="0" y1="50" x2="400" y2="50" stroke="#e2e8f0" strokeDasharray="3 4" strokeWidth="0.8" />
+                      <line x1="0" y1="85" x2="400" y2="85" stroke="#e2e8f0" strokeWidth="0.8" />
 
-                    {/* Filled Area */}
-                    <path
-                      d="M 0,90 Q 70,75 130,45 T 260,35 T 340,18 L 400,12 L 400,120 L 0,120 Z"
-                      fill="url(#chartGradient)"
-                    />
+                      {/* Filled Area */}
+                      <path
+                        d="M 0,75 Q 70,60 130,35 T 260,28 T 340,14 L 400,10 L 400,100 L 0,100 Z"
+                        fill="url(#chartGradient)"
+                      />
 
-                    {/* Smooth glowing line curve */}
-                    <path
-                      d="M 0,90 Q 70,75 130,45 T 260,35 T 340,18 L 400,12"
-                      fill="none"
-                      stroke="url(#lineStroke)"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                    />
+                      {/* Smooth glowing line curve */}
+                      <path
+                        d="M 0,75 Q 70,60 130,35 T 260,28 T 340,14 L 400,10"
+                        fill="none"
+                        stroke="url(#lineStroke)"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                      />
 
-                    {/* Highlighted real data nodes */}
-                    <circle cx="130" cy="45" r="4" fill="#ffffff" stroke="#0066cc" strokeWidth="2.5" />
-                    <circle cx="260" cy="35" r="4" fill="#ffffff" stroke="#0066cc" strokeWidth="2.5" />
-                    <circle cx="340" cy="18" r="5" fill="#0066cc" stroke="#ffffff" strokeWidth="2" />
-                  </svg>
+                      {/* Highlighted real data nodes */}
+                      <circle cx="130" cy="35" r="3.5" fill="#ffffff" stroke="#0066cc" strokeWidth="2.5" />
+                      <circle cx="260" cy="28" r="3.5" fill="#ffffff" stroke="#0066cc" strokeWidth="2.5" />
+                      <circle cx="340" cy="14" r="4.5" fill="#0066cc" stroke="#ffffff" strokeWidth="2" />
+                    </svg>
+                  </div>
 
                   {/* Horizontal Labels */}
-                  <div className="flex justify-between items-center text-[10px] text-slate-400 font-medium mt-2 px-1">
+                  <div className="flex justify-between items-center text-[10px] text-slate-400 font-medium mt-1.5 px-1">
                     <span>{language === 'uz' ? 'Qabul' : 'Intake'}</span>
                     <span>{language === 'uz' ? 'Tayyorlov' : 'Training'}</span>
                     <span>{language === 'uz' ? 'Olimpiada' : 'Contests'}</span>
@@ -397,10 +399,10 @@ export default function HeroDashboardVisual({
 
         {/* ── CARD 2: Expert Educators (Bottom-Left) ── */}
         <motion.div
-          initial={{ opacity: 0, y: 25, x: -20 }}
+          initial={{ opacity: 0, y: 20, x: -15 }}
           animate={{ opacity: 1, y: 0, x: 0 }}
           transition={{ duration: 0.7, delay: 0.45 }}
-          className="absolute -bottom-4 sm:-bottom-6 -left-3 sm:-left-7 z-20 hidden md:block"
+          className="absolute bottom-2 sm:-bottom-2 -left-2 sm:-left-5 z-20 hidden md:block"
         >
           <Link
             to="/teachers"
@@ -457,15 +459,15 @@ export default function HeroDashboardVisual({
 
         {/* ── CARD 4: NIS AI AGENT (Bottom-Right / Focal Interactive Card) ── */}
         <motion.div
-          initial={{ opacity: 0, y: 25, x: 20 }}
+          initial={{ opacity: 0, y: 20, x: 15 }}
           animate={{ opacity: 1, y: 0, x: 0 }}
           transition={{ duration: 0.7, delay: 0.55 }}
-          className="absolute -bottom-5 sm:-bottom-7 -right-3 sm:-right-8 z-30 hidden md:block"
+          className="absolute bottom-2 sm:-bottom-2 -right-1 sm:-right-4 z-30 hidden md:block"
         >
           <button
             type="button"
             onClick={onOpenAIAgent}
-            className="p-3.5 sm:p-4 bg-white/98 backdrop-blur-md rounded-2xl floating-card-shadow border-2 border-school-400/80 hover:border-school-600 transition-all duration-300 hover:scale-106 group cursor-pointer text-left animate-card-float-4"
+            className="p-3 sm:p-3.5 bg-white/98 backdrop-blur-md rounded-2xl floating-card-shadow border-2 border-school-400/80 hover:border-school-600 transition-all duration-300 hover:scale-105 group cursor-pointer text-left animate-card-float-4"
           >
             <div className="flex items-center gap-3">
               <div className="relative">

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { FiCpu } from 'react-icons/fi';
 import AIAgentChatDrawer from '../home/AIAgentChatDrawer';
@@ -12,6 +12,12 @@ import AIAgentChatDrawer from '../home/AIAgentChatDrawer';
 export default function FloatingAIAgentButton() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+
+  useEffect(() => {
+    const handleOpen = () => setIsOpen(true);
+    window.addEventListener('nis:open-ai-agent', handleOpen);
+    return () => window.removeEventListener('nis:open-ai-agent', handleOpen);
+  }, []);
 
   // Hide on the dedicated /ai-agent page or inside admin panel
   if (location.pathname === '/ai-agent' || location.pathname.startsWith('/admin')) {

@@ -68,88 +68,79 @@ export default function BranchesPage() {
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="card p-4 animate-pulse">
-                <div className="h-52 bg-slate-200 rounded-xl mb-4" />
-                <div className="h-5 bg-slate-200 rounded w-3/4 mb-3" />
-                <div className="h-4 bg-slate-100 rounded w-1/2" />
+              <div key={i} className="card p-3 sm:p-4 animate-pulse flex flex-row lg:flex-col gap-3.5">
+                <div className="w-32 xs:w-36 sm:w-48 lg:w-full h-32 sm:h-40 lg:h-52 bg-slate-200 rounded-xl shrink-0" />
+                <div className="flex-1 flex flex-col justify-center min-w-0">
+                  <div className="h-5 bg-slate-200 rounded w-3/4 mb-2.5" />
+                  <div className="h-4 bg-slate-100 rounded w-1/2 mb-2" />
+                  <div className="h-3 bg-slate-100 rounded w-1/3" />
+                </div>
               </div>
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {branches.map((b, i) => (
               <motion.div
                 key={b._id}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1, duration: 0.5 }}
-                className="card overflow-hidden group hover-lift flex flex-col"
+                className="card overflow-hidden group hover-lift flex flex-row lg:flex-col transition-all duration-300 h-full"
               >
                 {/* Image */}
-                <div className="relative h-52 bg-slate-100 overflow-hidden flex-shrink-0">
+                <div className="relative w-32 xs:w-36 sm:w-48 lg:w-full shrink-0 min-h-[140px] lg:h-52 bg-slate-100 overflow-hidden">
                   {b.coverImage || b.image ? (
                     <img src={getImageUrl(b.coverImage || b.image)} alt={b.name} className="w-full h-full object-cover group-hover:scale-106 transition-transform duration-700 ease-out" />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
-                      <FiMapPin size={48} className="text-blue-300" />
+                      <FiMapPin size={40} className="text-blue-300" />
                     </div>
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400" />
                   {b.featured && (
-                    <div className="absolute top-3 left-3">
-                      <span className="badge-deep text-[11px]">{t('branches.mainCampus', 'Bosh Kampus')}</span>
+                    <div className="absolute top-2 left-2 sm:top-2.5 sm:left-2.5">
+                      <span className="badge-deep text-[10px] sm:text-[11px]">{t('branches.mainCampus', 'Bosh Kampus')}</span>
                     </div>
                   )}
                 </div>
 
                 {/* Content */}
-                <div className="p-6 flex-1 flex flex-col">
-                  <h3 className="text-xl font-bold font-display text-slate-900 mb-1 group-hover:text-blue-600 transition-colors">
-                    {b.shortName || b.name}
-                  </h3>
-                  <div className="flex items-center gap-1.5 text-sm text-slate-500 mb-3">
-                    <FiMapPin size={13} className="text-blue-500 flex-shrink-0" /> {b.address || b.location}
-                  </div>
-
-                  {b.description && (
-                    <p className="text-sm text-slate-500 line-clamp-2 mb-4 leading-relaxed">{b.description}</p>
-                  )}
-
-                  {/* Stats */}
-                  <div className="grid grid-cols-3 gap-3 mb-5">
-                    <div className="text-center p-3 bg-blue-50 rounded-xl border border-blue-100/60">
-                      <p className="text-lg font-bold text-blue-700">{b.studentCount || '–'}</p>
-                      <p className="text-[11px] text-slate-500 mt-0.5">{t('branches.students', "O'quvchi")}</p>
+                <div className="p-3.5 xs:p-4 sm:p-5 lg:p-6 flex-1 flex flex-col justify-between min-w-0">
+                  <div>
+                    <h3 className="text-sm sm:text-base lg:text-xl font-bold font-display text-slate-900 mb-1 group-hover:text-blue-600 transition-colors truncate">
+                      {b.shortName || b.name}
+                    </h3>
+                    <div className="flex items-center gap-1.5 text-xs sm:text-sm text-slate-500 mb-2 truncate">
+                      <FiMapPin size={13} className="text-blue-500 shrink-0" /> {b.address || b.location}
                     </div>
-                    <div className="text-center p-3 bg-blue-50 rounded-xl border border-blue-100/60">
-                      <p className="text-lg font-bold text-blue-700">{b.teacherCount || '–'}</p>
-                      <p className="text-[11px] text-slate-500 mt-0.5">{t('branches.teachers', "O'qituvchi")}</p>
-                    </div>
-                    <div className="text-center p-3 bg-blue-50 rounded-xl border border-blue-100/60">
-                      <p className="text-lg font-bold text-blue-700">{b.established || '–'}</p>
-                      <p className="text-[11px] text-slate-500 mt-0.5">{t('branches.founded', 'Tashkil')}</p>
-                    </div>
-                  </div>
 
-                  {/* Contact */}
-                  <div className="space-y-1 mb-4">
-                    {b.phone && (
-                      <div className="flex items-center gap-2 text-xs text-slate-500">
-                        <FiPhone size={12} className="text-blue-400" /> {b.phone}
-                      </div>
+                    {b.description && (
+                      <p className="hidden sm:block text-xs sm:text-sm text-slate-500 line-clamp-2 mb-3 leading-relaxed">{b.description}</p>
                     )}
-                    {b.workingHours && (
-                      <div className="flex items-center gap-2 text-xs text-slate-500">
-                        <FiClock size={12} className="text-blue-400" /> {b.workingHours}
+
+                    {/* Compact Stats Pills */}
+                    <div className="grid grid-cols-3 gap-1.5 sm:gap-2 mb-3">
+                      <div className="text-center p-1.5 sm:p-2.5 bg-blue-50 rounded-lg sm:rounded-xl border border-blue-100/60">
+                        <p className="text-xs sm:text-base font-bold text-blue-700">{b.studentCount || '–'}</p>
+                        <p className="text-[9px] sm:text-[11px] text-slate-500">{t('branches.students', "O'quvchi")}</p>
                       </div>
-                    )}
+                      <div className="text-center p-1.5 sm:p-2.5 bg-blue-50 rounded-lg sm:rounded-xl border border-blue-100/60">
+                        <p className="text-xs sm:text-base font-bold text-blue-700">{b.teacherCount || '–'}</p>
+                        <p className="text-[9px] sm:text-[11px] text-slate-500">{t('branches.teachers', "O'qituvchi")}</p>
+                      </div>
+                      <div className="text-center p-1.5 sm:p-2.5 bg-blue-50 rounded-lg sm:rounded-xl border border-blue-100/60">
+                        <p className="text-xs sm:text-base font-bold text-blue-700">{b.established || '–'}</p>
+                        <p className="text-[9px] sm:text-[11px] text-slate-500">{t('branches.founded', 'Tashkil')}</p>
+                      </div>
+                    </div>
                   </div>
 
                   <Link
                     to={`/branches/${b._id}`}
-                    className="mt-auto flex items-center gap-1 text-sm font-semibold text-blue-600 hover:gap-2 transition-all duration-200"
+                    className="mt-2 pt-2 border-t border-slate-100 flex items-center gap-1 text-xs sm:text-sm font-semibold text-blue-600 hover:gap-2 transition-all duration-200"
                   >
                     {t('branches.viewDetails', "Batafsil ko'rish")} <FiChevronRight size={14} />
                   </Link>

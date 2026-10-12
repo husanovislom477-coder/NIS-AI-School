@@ -74,68 +74,68 @@ export default function StudentsPage() {
         </p>
 
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-5">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="card p-4 animate-pulse h-72 bg-slate-50" />
+              <div key={i} className="card p-3 sm:p-4 animate-pulse h-32 bg-slate-50 flex flex-row lg:flex-col gap-3" />
             ))}
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-5">
               {students.map((s, i) => (
                 <motion.div
                   key={s._id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.06, duration: 0.45 }}
-                  className="card overflow-hidden group hover-lift"
+                  transition={{ delay: i * 0.05, duration: 0.45 }}
+                  className="card overflow-hidden group hover-lift flex flex-row lg:flex-col transition-all duration-300 h-full"
                 >
-                  {/* Top section with avatar */}
-                  <div className="p-6 pb-4 bg-gradient-to-br from-blue-50 to-slate-50 border-b border-slate-100">
-                    <div className="flex items-center gap-4">
-                      <div className="relative">
-                        <img
-                          src={getImageUrl(s.photo) || `https://ui-avatars.com/api/?name=${s.firstName}+${s.lastName}&background=0066cc&color=fff&size=120`}
-                          alt={s.firstName}
-                          className="w-16 h-16 rounded-2xl object-cover border-2 border-white shadow-md"
-                          onError={(e) => { e.target.src = `https://ui-avatars.com/api/?name=${s.firstName}+${s.lastName}&background=0066cc&color=fff&size=120`; }}
-                        />
-                        {s.awards?.length > 0 && (
-                          <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center shadow-sm">
-                            <FiStar size={10} className="text-white" />
-                          </div>
-                        )}
-                      </div>
-                      <div className="min-w-0">
-                        <h3 className="font-bold text-slate-900 font-display truncate">{s.firstName} {s.lastName}</h3>
-                        <p className="text-sm text-blue-600 font-medium">{s.grade}</p>
-                        {s.university && (
-                          <p className="text-xs text-emerald-600 font-medium truncate mt-0.5">{s.university}</p>
-                        )}
-                      </div>
+                  {/* Left avatar container */}
+                  <div className="w-24 xs:w-28 sm:w-36 lg:w-full shrink-0 bg-gradient-to-br from-blue-50 to-slate-50 flex items-center justify-center p-3 lg:py-6 border-r lg:border-r-0 lg:border-b border-slate-100 relative">
+                    <div className="relative">
+                      <img
+                        src={getImageUrl(s.photo) || `https://ui-avatars.com/api/?name=${s.firstName}+${s.lastName}&background=0066cc&color=fff&size=120`}
+                        alt={s.firstName}
+                        className="w-13 h-13 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-2xl object-cover border-2 border-white shadow-sm"
+                        onError={(e) => { e.target.src = `https://ui-avatars.com/api/?name=${s.firstName}+${s.lastName}&background=0066cc&color=fff&size=120`; }}
+                      />
+                      {s.awards?.length > 0 && (
+                        <div className="absolute -top-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 bg-yellow-400 rounded-full flex items-center justify-center shadow-xs">
+                          <FiStar size={10} className="text-white" />
+                        </div>
+                      )}
                     </div>
                   </div>
 
-                  {/* Bottom section */}
-                  <div className="p-5">
-                    {/* Test scores */}
-                    {s.results?.slice(0, 2).map((r, j) => (
-                      <div key={j} className="flex items-center justify-between text-sm mb-2">
-                        <span className="text-slate-500 font-medium">{r.type}</span>
-                        <span className="font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg text-xs">{r.score}</span>
-                      </div>
-                    ))}
+                  {/* Right content container */}
+                  <div className="p-3 xs:p-3.5 sm:p-4 lg:p-5 flex-1 flex flex-col justify-between min-w-0">
+                    <div>
+                      <h3 className="font-bold text-slate-900 font-display text-xs sm:text-sm lg:text-base truncate">{s.firstName} {s.lastName}</h3>
+                      <p className="text-[11px] sm:text-xs text-blue-600 font-medium truncate">{s.grade}</p>
+                      {s.university && (
+                        <p className="text-[10px] sm:text-[11px] text-emerald-600 font-medium truncate mt-0.5">{s.university}</p>
+                      )}
 
-                    {/* Award highlight */}
-                    {s.awards?.slice(0, 1).map((a, j) => (
-                      <div key={j} className="flex items-center gap-2 mt-3 p-2.5 bg-amber-50 rounded-xl border border-amber-100">
-                        <FiAward size={13} className="text-amber-500 flex-shrink-0" />
-                        <p className="text-xs text-slate-700 font-medium truncate">{a.title}</p>
+                      {/* Test scores row */}
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {s.results?.slice(0, 2).map((r, j) => (
+                          <span key={j} className="text-[10px] sm:text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100/80">
+                            {r.type}: {r.score}
+                          </span>
+                        ))}
                       </div>
-                    ))}
 
-                    <Link to={`/students/${s._id}`} className="mt-4 flex items-center gap-1 text-sm text-blue-600 font-medium hover:gap-2 transition-all duration-200">
-                      {t('results.details', 'Batafsil')} <FiChevronRight size={14} />
+                      {/* Award highlight */}
+                      {s.awards?.slice(0, 1).map((a, j) => (
+                        <div key={j} className="flex items-center gap-1.5 mt-2 p-1.5 sm:p-2 bg-amber-50 rounded-lg border border-amber-100">
+                          <FiAward size={12} className="text-amber-500 shrink-0" />
+                          <p className="text-[10px] sm:text-[11px] text-slate-700 font-medium truncate">{a.title}</p>
+                        </div>
+                      ))}
+                    </div>
+
+                    <Link to={`/students/${s._id}`} className="mt-2.5 pt-2 border-t border-slate-100 flex items-center gap-1 text-[11px] sm:text-xs text-blue-600 font-semibold hover:gap-2 transition-all duration-200">
+                      {t('results.details', 'Batafsil')} <FiChevronRight size={13} />
                     </Link>
                   </div>
                 </motion.div>
