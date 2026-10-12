@@ -12,6 +12,7 @@ const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 
 const connectDB = require('./config/database');
+const { getDBStatus } = require('./services/db');
 const { errorHandler, notFound } = require('./middleware/errorHandler');
 
 // Routes
@@ -69,6 +70,7 @@ const frontendUrls = (process.env.FRONTEND_URL || '')
 
 const allowedOrigins = [
   ...frontendUrls,
+  'https://nis-ai-school.vercel.app',
   'http://localhost:5173',
   'http://localhost:5174',
   'http://localhost:5175',
@@ -138,6 +140,7 @@ app.use('/api/chat', aiRoutes);
 
 // Health checks (Root, /health, and /api/health for Render/cloud platforms)
 const healthHandler = (req, res) => {
+  const dbStatus = typeof getDBStatus === 'function' ? getDBStatus() : { isPrismaConnected: false, type: 'Unknown' };
   res.json({
     success: true,
     service: 'NIS AI School Backend API',
@@ -145,6 +148,10 @@ const healthHandler = (req, res) => {
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'development',
     version: '1.0.0',
+    database: {
+      connected: dbStatus.isPrismaConnected,
+      engine: dbStatus.type,
+    },
   });
 };
 app.get('/', healthHandler);

@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const rawApiUrl =
   import.meta.env.VITE_API_URL ||
-  (import.meta.env.PROD ? '/api' : 'http://localhost:3001/api');
+  (import.meta.env.PROD ? 'https://nis-ai-school-kbc1.onrender.com/api' : 'http://localhost:3001/api');
 
 // Clean up trailing slashes and ensure it ends with /api
 const trimmed = rawApiUrl.replace(/\/+$/, '');

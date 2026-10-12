@@ -13,7 +13,7 @@ export const getImageUrl = (url, fallback = '') => {
   const backendBase =
     import.meta.env.VITE_BACKEND_URL ||
     derivedBackend ||
-    (import.meta.env.PROD ? '' : 'http://localhost:3001');
+    (import.meta.env.PROD ? 'https://nis-ai-school-kbc1.onrender.com' : 'http://localhost:3001');
 
   const cleanPath = url.startsWith('/') ? url : `/${url}`;
   return `${backendBase}${cleanPath}`;

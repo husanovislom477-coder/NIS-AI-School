@@ -702,6 +702,11 @@ const initDB = async () => {
   }
 };
 
+const getDBStatus = () => ({
+  isPrismaConnected,
+  type: isPrismaConnected ? 'PostgreSQL (Prisma)' : 'Persistent Storage (JSON)',
+});
+
 // ─── LANGUAGE OPERATIONS (DYNAMIC LANGUAGES MANAGEMENT) ────────────────────────
 
 const listLanguages = async ({ all = false } = {}) => {
@@ -2184,6 +2189,7 @@ const countEvents = async () => fileDb.events.length;
 module.exports = {
   prisma,
   initDB,
+  getDBStatus,
   sanitizeUser,
   resolveEntityLocalization,
   // Languages (Dynamic languages management)
